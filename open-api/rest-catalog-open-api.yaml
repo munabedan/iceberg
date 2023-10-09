@@ -1170,7 +1170,6 @@ components:
             type: string
           example: [ "department", "access_group" ]
         updates:
-          uniqueItems: true
           type: object
           example: { "owner": "Hank Bendickson" }
           additionalProperties:
@@ -1680,6 +1679,7 @@ components:
         action:
           type: string
           enum:
+            - assign-uuid
             - upgrade-format-version
             - add-schema
             - set-current-schema
@@ -1694,6 +1694,16 @@ components:
             - set-location
             - set-properties
             - remove-properties
+
+    AssignUUIDUpdate:
+      allOf:
+        - $ref: '#/components/schemas/BaseUpdate'
+        - type: object
+          required:
+            - uuid
+          properties:
+            uuid:
+              type: string
 
     UpgradeFormatVersionUpdate:
       allOf:
@@ -1851,6 +1861,7 @@ components:
 
     TableUpdate:
       anyOf:
+        - $ref: '#/components/schemas/AssignUUIDUpdate'
         - $ref: '#/components/schemas/UpgradeFormatVersionUpdate'
         - $ref: '#/components/schemas/AddSchemaUpdate'
         - $ref: '#/components/schemas/SetCurrentSchemaUpdate'

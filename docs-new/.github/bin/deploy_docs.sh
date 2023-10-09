@@ -13,11 +13,20 @@ GIT_BRANCH="docs-${ICEBERG_VERSION}"
 # change to branch
 git checkout -b $GIT_BRANCH
 
-cd ..
+# move to the iceberg root
+cd $(git rev-parse --show-toplevel)
 
-#remove all all files and directories except the docs/ folder
-find . -type f -exec rm -f {} +
-find . ! -name 'docs-new' -type d -exec rm -rf {} +
+# remove all files and directories except the exceptions
+
+find . \
+ # exception directories
+ -not \( -path ./.git -prune \) \
+ -not \( -path ./.github -prune \) \
+ -not \( -path ./docs-new  -prune \) \
+ # execption files
+ ! -name LICENSE \
+ ! -name NOTICE \
+ -exec rm -rf {} +
 
 # move the nightly docs to the root and change from 'nightly'
 mv docs-new/docs/docs/nightly/* .
@@ -31,7 +40,7 @@ sed -i '' -E "s/(^[[:space:]]*-[[:space:]]+Javadoc:.*\/javadoc\/)nightly/\1${ICE
 
 # add exclude search for older documentation
 python3 -c "import os
-for f in filter(lambda x: x.endswith('.md'), os.listdir('.')): lines = open(f).readlines(); open(f, 'w').writelines(lines[:2] + ['search:\n', '  exclude: true\n'] + lines[2:]);"
+for f in filter(lambda x: x.endswith('.md'), os.listdir('./docs')): lines = open(f).readlines(); open(f, 'w').writelines(lines[:2] + ['search:\n', '  exclude: true\n'] + lines[2:]);"
 
 git add .
 
