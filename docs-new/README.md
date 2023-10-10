@@ -36,7 +36,7 @@ All static pages are all the `./docs/.*md` files and the docs are the `.docs/doc
 ├── docs
 │   ├── assets
 │   ├── docs
-│   │   └── latest
+│   │   └── nightly
 │   │       ├── docs
 │   │       │   ├── assets
 │   │       │   ├── api.md
@@ -58,6 +58,7 @@ All of the documentation versions are saved in special `docs-<version>` branches
 .
 └── docs
     ├── docs
+    │   ├── nightly
     │   ├── latest
     │   ├── 1.3.1
     │   ├── 1.3.0
@@ -88,8 +89,8 @@ To build locally with additional docs versions, add them to your working tree.
 For now, I'm just adding a single version, and the javadocs directory.
 
 ```
-git worktree add site/docs/1.3.1 docs-1.3.1
-git worktree add site/javadoc javadoc
+git worktree add docs/docs/1.3.1 docs-1.3.1
+git worktree add docs/javadoc javadoc
 ```
 
 ## Build
@@ -111,7 +112,7 @@ mkdocs serve
 ### Release process
 
 Deploying a version of the docs is a two step process:
- 1. Cut a new release from the `latest` documentation which creates a new branch `docs-<version>`.
+ 1. Cut a new release from the `` documentation which creates a new branch `docs-<version>`.
 
     ```
     .github/bin/deploy_docs.sh -v 1.4.0
@@ -127,20 +128,25 @@ Deploying a version of the docs is a two step process:
 
 ### How links work in this project
 
-Wherever the `docs_dir` points to for a given MkDocs project, becomes the root of that project and [all links are relative to it](https://www.mkdocs.org/user-guide/writing-your-docs/#internal-links). In the Iceberg docs, the top level root is in the `./site` directory and `./site/docs/<version>` is the root for each versioned doc project. 
+The [`docs_dir`](https://www.mkdocs.org/user-guide/configuration/#docs_dir) points to the directory containing the source markdown files for an MkDocs project. By default, this points to the `./docs` directory and generates the static site in the [`site_dir`](https://www.mkdocs.org/user-guide/configuration/#site_dir) becomes the root of that project and [all links are relative to it](https://www.mkdocs.org/user-guide/writing-your-docs/#internal-links). In the Iceberg docs, since the top-level site and versioned docs are contained in the same directory, they all live under the canonoical `/docs` directory. The `/docs/docs` directory follows the mkdocs convention, while the `/docs/docs/docs` directory is an analog to the "Docs" navigation tab. Under this directory, you'll find the `/docs/docs/docs/nightly` directory, which contains the current state of the documentation in the `main` branch. All previously versioned docs, will be mounted using git worktree at this location, following the `/docs/docs/docs/<version>` format. The `latest` directory, will simply be a second copy of the latest version under a `latest` release tag. 
 
 ```
-.
-├── site
+./docs/
+├── _docs_
 │   ├── docs
+│   │  ├── nightly
+│   │  │   ├── _docs_
+│   │  │   └── mkdocs.yml
 │   │  ├── latest
-│   │  │   └── mkdocs.yml(docs_dir='.')
+│   │  │   ├── _docs_
+│   │  │   └── mkdocs.yml
 │   │  └── 1.3.1
-│   │      └── mkdocs.yml(docs_dir='.')
+│   │      ├── _docs_
+│   │      └── mkdocs.yml
 │   └─ javadoc
 │      ├── latest
 │      └── 1.3.1
-└── mkdocs.yml(docs_dir='site')
+└── mkdocs.yml
 ```
 
 When `mkdocs-monorepo-plugin` compiles, it must first build the versioned documentation sites before aggregating the top-level site with the generated. Due to the delayed aggregation of subdocs of `mkdocs-monorepo-plugin` there may be warnings that display for the versioned docs that compile without being able to reference documentation it expects outside of the immediate poject due to being off by one or more directories. In other words, if the relative linking required doesn't mirror the directory layout on disk, these errors will occur. The only place this occurs now is with the nav link to javadoc. For more information, refer to: <https://github.com/backstage/mkdocs-monorepo-plugin#usage>
@@ -163,5 +169,5 @@ cat ./link_warnings.csv
 
  - Do not use static links from within the documentation to the public Iceberg site (i.e. `[branching](https://iceberg.apache.org/docs/latest/branching)`). If you are running in a local environment and made changes to the page you're linking to, your changes mysteriously won't take effect and you'll be scratching your head unless you happen to notice the url bar change.
  - Only use relative links. If you want to reference the root (the directory where the main mkdocs.yml is located `site` in our case) use "spec.md" vs "/spec.md". Also, static sites should only reference the `docs/*` (see next point), but docs can reference the static content normally (e.g. `branching.md` page which is a versioned page linking to `spec.md` which is a static page).
- - Avoid statically linking a specific version of the documentation ('latest', '1.3.1', etc...) unless it is absolutely relevant to the context being provided. This should almost never be the case unless referencing legacy functionality.
+ - Avoid statically linking a specific version of the documentation ('nightly', 'latest', '1.3.1', etc...) unless it is absolutely relevant to the context being provided. This should almost never be the case unless referencing legacy functionality.
  - When internally linking markdown files to other markdown files, [always use the `.md` suffix](https://github.com/mkdocs/mkdocs/issues/2456#issuecomment-881877986). That will indicate to mkdocs exactly how to treat that link depending on the mode the link is compiled with, e.g. if it becomes a <filename>/index.html or <filename>.html. Using the `.md` extension will work with either mode. 
