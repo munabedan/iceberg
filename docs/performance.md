@@ -1,13 +1,7 @@
 ---
 title: Performance
-url: performance
-aliases:
-    - "tables/performance"
-menu:
-    main:
-        parent: Tables
-        identifier: tables_performance
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more

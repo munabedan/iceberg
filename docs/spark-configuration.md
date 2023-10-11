@@ -1,13 +1,7 @@
 ---
 title: "Configuration"
-url: spark-configuration
-aliases:
-    - "spark/spark-configuration"
-menu:
-    main:
-        parent: Spark
-        identifier: spark_configuration
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -57,9 +51,9 @@ spark.sql.catalog.hadoop_prod.type = hadoop
 spark.sql.catalog.hadoop_prod.warehouse = hdfs://nn:8020/warehouse/path
 ```
 
-{{< hint info >}}
-The Hive-based catalog only loads Iceberg tables. To load non-Iceberg tables in the same Hive metastore, use a [session catalog](#replacing-the-session-catalog).
-{{< /hint >}}
+!!! info
+    The Hive-based catalog only loads Iceberg tables. To load non-Iceberg tables in the same Hive metastore, use a [session catalog](#replacing-the-session-catalog).
+
 
 ### Catalog configuration
 
@@ -86,7 +80,7 @@ Both catalogs are configured using properties nested under the catalog name. Com
 | spark.sql.catalog._catalog-name_.table-default._propertyKey_  |                               | Default Iceberg table property value for property key _propertyKey_, which will be set on tables created by this catalog if not overridden                                                                                               |
 | spark.sql.catalog._catalog-name_.table-override._propertyKey_ |                               | Enforced Iceberg table property value for property key _propertyKey_, which cannot be overridden by user                                                                                                                                 |
 
-Additional properties can be found in common [catalog configuration](../configuration#catalog-properties).
+Additional properties can be found in common [catalog configuration](configuration.md#catalog-properties).
 
 
 ### Using catalogs
@@ -189,26 +183,8 @@ df.write
 | write-format           | Table write.format.default | File format to use for this write operation; parquet, avro, or orc |
 | target-file-size-bytes | As per table property      | Overrides this table's write.target-file-size-bytes          |
 | check-nullability      | true                       | Sets the nullable check on fields                            |
-| snapshot-property._custom-key_    | null            | Adds an entry with custom-key and corresponding value in the snapshot summary (the `snapshot-property.` prefix is only required for DSv2)  |
+| snapshot-property._custom-key_    | null            | Adds an entry with custom-key and corresponding value in the snapshot summary  |
 | fanout-enabled       | false        | Overrides this table's write.spark.fanout.enabled  |
 | check-ordering       | true        | Checks if input schema and table schema are same  |
 | isolation-level | null | Desired isolation level for Dataframe overwrite operations.  `null` => no checks (for idempotent writes), `serializable` => check for concurrent inserts or deletes in destination partitions, `snapshot` => checks for concurrent deletes in destination partitions. |
-| validate-from-snapshot-id | null | If isolation level is set, id of base snapshot from which to check concurrent write conflicts into a table. Should be the snapshot before any reads from the table. Can be obtained via [Table API](../../api#table-metadata) or [Snapshots table](../spark-queries#snapshots). If null, the table's oldest known snapshot is used. |
-| compression-codec      | Table write.(fileformat).compression-codec | Overrides this table's compression codec for this write      |
-| compression-level      | Table write.(fileformat).compression-level | Overrides this table's compression level for Parquet and Avro tables for this write |
-| compression-strategy   | Table write.orc.compression-strategy       | Overrides this table's compression strategy for ORC tables for this write |
-
-CommitMetadata provides an interface to add custom metadata to a snapshot summary during a SQL execution, which can be beneficial for purposes such as auditing or change tracking. If properties start with `snapshot-property.`, then that prefix will be removed from each property. Here is an example:
-
-```java
-import org.apache.iceberg.spark.CommitMetadata;
-
-Map<String, String> properties = Maps.newHashMap();
-properties.put("property_key", "property_value");
-CommitMetadata.withCommitProperties(properties,
-        () -> {
-            spark.sql("DELETE FROM " + tableName + " where id = 1");
-            return 0;
-        },
-        RuntimeException.class);
-```
+| validate-from-snapshot-id | null | If isolation level is set, id of base snapshot from which to check concurrent write conflicts into a table. Should be the snapshot before any reads from the table. Can be obtained via [Table API](api.md#table-metadata) or [Snapshots table](spark-queries.md#snapshots). If null, the table's oldest known snapshot is used. |

@@ -1,13 +1,7 @@
 ---
 title: "Flink Queries"
-url: flink-queries
-aliases:
-   - "flink/flink-queries"
-menu:
-   main:
-      parent: Flink
-      identifier: flink_queries
-      weight: 300
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -70,7 +64,7 @@ SELECT * FROM sample /*+ OPTIONS('streaming'='true', 'monitor-interval'='1s')*/ 
 SELECT * FROM sample /*+ OPTIONS('streaming'='true', 'monitor-interval'='1s', 'start-snapshot-id'='3821550127947089987')*/ ;
 ```
 
-There are some options that could be set in Flink SQL hint options for streaming job, see [read options](#Read-options) for details.
+There are some options that could be set in Flink SQL hint options for streaming job, see [read options](#read-options) for details.
 
 ### FLIP-27 source for SQL
 
@@ -83,7 +77,7 @@ SET table.exec.iceberg.use-flip27-source = true;
 
 ### Reading branches and tags with SQL
 Branch and tags can be read via SQL by specifying options. For more details
-refer to [Flink Configuration](../flink-configuration/#read-options)
+refer to [Flink Configuration](flink-configuration.md#read-options)
 
 ```sql
 --- Read from branch b1
@@ -141,7 +135,7 @@ stream.print();
 env.execute("Test Iceberg Streaming Read");
 ```
 
-There are other options that can be set, please see the [FlinkSource#Builder](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/flink/source/FlinkSource.html).
+There are other options that can be set, please see the [FlinkSource#Builder](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/flink/source/FlinkSource.html).
 
 ## Reading with DataStream (FLIP-27 source)
 
@@ -195,7 +189,7 @@ IcebergSource source = IcebergSource.forRowData()
     .streaming(true)
     .streamingStartingStrategy(StreamingStartingStrategy.INCREMENTAL_FROM_LATEST_SNAPSHOT)
     .monitorInterval(Duration.ofSeconds(60))
-    .build();
+    .build()
 
 DataStream<RowData> stream = env.fromSource(
     source,
@@ -211,7 +205,7 @@ env.execute("Test Iceberg Streaming Read");
 ```
 
 There are other options that could be set by Java API, please see the
-[IcebergSource#Builder](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/flink/source/IcebergSource.html).
+[IcebergSource#Builder](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/flink/source/IcebergSource.html).
 
 ### Reading branches and tags with DataStream
 Branches and tags can also be read via the DataStream API
@@ -310,7 +304,7 @@ env.getConfig()
 ...
 ```
 
-Check out all the options here: [read-options](/flink-configuration#read-options) 
+Check out all the options here: [read-options](flink-configuration.md#read-options) 
 
 ## Inspecting tables
 
@@ -335,9 +329,9 @@ SELECT * FROM prod.db.table$history;
 | 2019-02-09 19:42:03.919 | 8924558786060583479 | 2999875608062437330 | true                |
 | 2019-02-09 19:49:16.343 | 6536733823181975045 | 8924558786060583479 | true                |
 
-{{< hint info >}}
-**This shows a commit that was rolled back.** In this example, snapshot 296410040247533544 and 2999875608062437330 have the same parent snapshot 5179299526185056830. Snapshot 296410040247533544 was rolled back and is *not* an ancestor of the current table state.
-{{< /hint >}}
+!!! info
+    **This shows a commit that was rolled back.** In this example, snapshot 296410040247533544 and 2999875608062437330 have the same parent snapshot 5179299526185056830. Snapshot 296410040247533544 was rolled back and is *not* an ancestor of the current table state.
+
 
 ### Metadata Log Entries
 
@@ -412,7 +406,7 @@ SELECT * FROM prod.db.table$manifests;
 
 Note:
 
-1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../../spec#manifest-lists), with the following order:
+1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../spec.md#manifest-lists), with the following order:
     - `contains_null`
     - `contains_nan`
     - `lower_bound`
@@ -428,23 +422,23 @@ To show a table's current partitions:
 SELECT * FROM prod.db.table$partitions;
 ```
 
-| partition      | spec_id | record_count  | file_count | total_data_file_size_in_bytes | position_delete_record_count | position_delete_file_count | equality_delete_record_count | equality_delete_file_count | last_updated_at(μs) | last_updated_snapshot_id |
-| -------------- |---------|---------------|------------|--------------------------|------------------------------|----------------------------|------------------------------|----------------------------|---------------------|--------------------------|
-| {20211001, 11} | 0       | 1             | 1          | 100                      | 2                            | 1                          | 0                            | 0                          | 1633086034192000    | 9205185327307503337      |
-| {20211002, 11} | 0       | 4             | 3          | 500                      | 1                            | 1                          | 0                            | 0                          | 1633172537358000    | 867027598972211003       |
-| {20211001, 10} | 0       | 7             | 4          | 700                      | 0                            | 0                          | 0                            | 0                          | 1633082598716000    | 3280122546965981531      |
-| {20211002, 10} | 0       | 3             | 2          | 400                      | 0                            | 0                          | 1                            | 1                          | 1633169159489000    | 6941468797545315876      |
+| partition      | record_count | file_count | spec_id |
+| -------------- | ------------ | ---------- | ------- |
+| {20211001, 11} | 1            | 1          | 0       |
+| {20211002, 11} | 1            | 1          | 0       |
+| {20211001, 10} | 1            | 1          | 0       |
+| {20211002, 10} | 1            | 1          | 0       |
 
 Note:
-For unpartitioned tables, the partitions table will not contain the partition and spec_id fields.
+For unpartitioned tables, the partitions table will contain only the record_count and file_count columns.
 
 ### All Metadata Tables
 
 These tables are unions of the metadata tables specific to the current snapshot, and return metadata across all snapshots.
 
-{{< hint danger >}}
-The "all" metadata tables may produce more than one row per data file or manifest file because metadata files may be part of more than one table snapshot.
-{{< /hint >}}
+!!! danger
+    The "all" metadata tables may produce more than one row per data file or manifest file because metadata files may be part of more than one table snapshot.
+
 
 #### All Data Files
 
@@ -474,7 +468,7 @@ SELECT * FROM prod.db.table$all_manifests;
 
 Note:
 
-1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../../spec#manifest-lists), with the following order:
+1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../spec.md#manifest-lists), with the following order:
     - `contains_null`
     - `contains_nan`
     - `lower_bound`

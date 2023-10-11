@@ -1,11 +1,7 @@
 ---
 title: "JDBC"
-url: jdbc
-menu:
-    main:
-        parent: Integrations
-        identifier: jdbc_integration
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -50,7 +46,7 @@ the JDBC catalog allows arbitrary configurations through:
 You can start a Spark session with a MySQL JDBC connection using the following configurations:
 
 ```shell
-spark-sql --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{% icebergVersion %}} \
+spark-sql --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{ icebergVersion }} \
     --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog \
     --conf spark.sql.catalog.my_catalog.warehouse=s3://my-bucket/my/key/prefix \
     --conf spark.sql.catalog.my_catalog.catalog-impl=org.apache.iceberg.jdbc.JdbcCatalog \

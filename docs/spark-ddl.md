@@ -1,13 +1,7 @@
 ---
 title: "DDL"
-url: spark-ddl
-aliases:
-    - "spark/spark-ddl"
-menu:
-    main:
-        parent: Spark
-        identifier: spark_ddl
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,7 +22,7 @@ menu:
 
 # Spark DDL
 
-To use Iceberg in Spark, first configure [Spark catalogs](../spark-configuration). Iceberg uses Apache Spark's DataSourceV2 API for data source and catalog implementations.
+To use Iceberg in Spark, first configure [Spark catalogs](spark-configuration.md). Iceberg uses Apache Spark's DataSourceV2 API for data source and catalog implementations.
 
 ## `CREATE TABLE`
 
@@ -41,14 +35,14 @@ CREATE TABLE prod.db.sample (
 USING iceberg
 ```
 
-Iceberg will convert the column type in Spark to corresponding Iceberg type. Please check the section of [type compatibility on creating table](../spark-writes#spark-type-to-iceberg-type) for details.
+Iceberg will convert the column type in Spark to corresponding Iceberg type. Please check the section of [type compatibility on creating table](spark-writes.md#spark-type-to-iceberg-type) for details.
 
 Table create commands, including CTAS and RTAS, support the full range of Spark create clauses, including:
 
 * `PARTITIONED BY (partition-expressions)` to configure partitioning
 * `LOCATION '(fully-qualified-uri)'` to set the table location
 * `COMMENT 'table documentation'` to set a table description
-* `TBLPROPERTIES ('key'='value', ...)` to set [table configuration](../configuration)
+* `TBLPROPERTIES ('key'='value', ...)` to set [table configuration](configuration.md)
 
 Create commands may also set the default format with the `USING` clause. This is only supported for `SparkCatalog` because Spark handles the `USING` clause differently for the built-in catalog.
 
@@ -65,7 +59,7 @@ USING iceberg
 PARTITIONED BY (category)
 ```
 
-The `PARTITIONED BY` clause supports transform expressions to create [hidden partitions](../partitioning).
+The `PARTITIONED BY` clause supports transform expressions to create [hidden partitions](partitioning.md).
 
 ```sql
 CREATE TABLE prod.db.sample (
@@ -79,20 +73,18 @@ PARTITIONED BY (bucket(16, id), days(ts), category)
 
 Supported transformations are:
 
-* `year(ts)`: partition by year
-* `month(ts)`: partition by month
-* `day(ts)` or `date(ts)`: equivalent to dateint partitioning
-* `hour(ts)` or `date_hour(ts)`: equivalent to dateint and hour partitioning
+* `years(ts)`: partition by year
+* `months(ts)`: partition by month
+* `days(ts)` or `date(ts)`: equivalent to dateint partitioning
+* `hours(ts)` or `date_hour(ts)`: equivalent to dateint and hour partitioning
 * `bucket(N, col)`: partition by hashed value mod N buckets
 * `truncate(L, col)`: partition by value truncated to L
     * Strings are truncated to the given length
     * Integers and longs truncate to bins: `truncate(10, i)` produces partitions 0, 10, 20, 30, ...
 
-Note: Old syntax of `years(ts)`, `months(ts)`, `days(ts)` and `hours(ts)` are also supported for compatibility. 
-
 ## `CREATE TABLE ... AS SELECT`
 
-Iceberg supports CTAS as an atomic operation when using a [`SparkCatalog`](../spark-configuration#catalog-configuration). CTAS is supported, but is not atomic when using [`SparkSessionCatalog`](../spark-configuration#replacing-the-session-catalog).
+Iceberg supports CTAS as an atomic operation when using a [`SparkCatalog`](spark-configuration.md#catalog-configuration). CTAS is supported, but is not atomic when using [`SparkSessionCatalog`](spark-configuration.md#replacing-the-session-catalog).
 
 ```sql
 CREATE TABLE prod.db.sample
@@ -112,7 +104,7 @@ AS SELECT ...
 
 ## `REPLACE TABLE ... AS SELECT`
 
-Iceberg supports RTAS as an atomic operation when using a [`SparkCatalog`](../spark-configuration#catalog-configuration). RTAS is supported, but is not atomic when using [`SparkSessionCatalog`](../spark-configuration#replacing-the-session-catalog).
+Iceberg supports RTAS as an atomic operation when using a [`SparkCatalog`](spark-configuration.md#catalog-configuration). RTAS is supported, but is not atomic when using [`SparkSessionCatalog`](spark-configuration.md#replacing-the-session-catalog).
 
 Atomic table replacement creates a new snapshot with the results of the `SELECT` query, but keeps table history.
 
@@ -174,7 +166,7 @@ Iceberg has full `ALTER TABLE` support in Spark 3, including:
 * Widening the type of `int`, `float`, and `decimal` fields
 * Making required columns optional
 
-In addition, [SQL extensions](../spark-configuration#sql-extensions) can be used to add support for partition evolution and setting a table's write order
+In addition, [SQL extensions](spark-configuration.md#sql-extensions) can be used to add support for partition evolution and setting a table's write order
 
 ### `ALTER TABLE ... RENAME TO`
 
@@ -190,7 +182,7 @@ ALTER TABLE prod.db.sample SET TBLPROPERTIES (
 )
 ```
 
-Iceberg uses table properties to control table behavior. For a list of available properties, see [Table configuration](../configuration).
+Iceberg uses table properties to control table behavior. For a list of available properties, see [Table configuration](configuration.md).
 
 `UNSET` is used to remove properties:
 
@@ -308,20 +300,15 @@ ALTER TABLE prod.db.sample ALTER COLUMN col FIRST
 ALTER TABLE prod.db.sample ALTER COLUMN nested.col AFTER other_col
 ```
 
-Nullability for a non-nullable column can be changed using `DROP NOT NULL`:
+Nullability can be changed using `SET NOT NULL` and `DROP NOT NULL`:
 
 ```sql
 ALTER TABLE prod.db.sample ALTER COLUMN id DROP NOT NULL
 ```
 
-{{< hint info >}}
-It is not possible to change a nullable column to a non-nullable column with `SET NOT NULL` because Iceberg doesn't know whether there is existing data with null values.
-{{< /hint >}}
+!!! info
+    `ALTER COLUMN` is not used to update `struct` types. Use `ADD COLUMN` and `DROP COLUMN` to add or remove struct fields.
 
-
-{{< hint info >}}
-`ALTER COLUMN` is not used to update `struct` types. Use `ADD COLUMN` and `DROP COLUMN` to add or remove struct fields.
-{{< /hint >}}
 
 
 ### `ALTER TABLE ... DROP COLUMN`
@@ -335,7 +322,7 @@ ALTER TABLE prod.db.sample DROP COLUMN point.z
 
 ## `ALTER TABLE` SQL extensions
 
-These commands are available in Spark 3 when using Iceberg [SQL extensions](../spark-configuration#sql-extensions).
+These commands are available in Spark 3 when using Iceberg [SQL extensions](spark-configuration.md#sql-extensions).
 
 ### `ALTER TABLE ... ADD PARTITION FIELD`
 
@@ -350,7 +337,7 @@ ALTER TABLE prod.db.sample ADD PARTITION FIELD catalog -- identity transform
 ```sql
 ALTER TABLE prod.db.sample ADD PARTITION FIELD bucket(16, id)
 ALTER TABLE prod.db.sample ADD PARTITION FIELD truncate(4, data)
-ALTER TABLE prod.db.sample ADD PARTITION FIELD year(ts)
+ALTER TABLE prod.db.sample ADD PARTITION FIELD years(ts)
 -- use optional AS keyword to specify a custom name for the partition field 
 ALTER TABLE prod.db.sample ADD PARTITION FIELD bucket(16, id) AS shard
 ```
@@ -359,14 +346,14 @@ Adding a partition field is a metadata operation and does not change any of the 
 
 Dynamic partition overwrite behavior will change when the table's partitioning changes because dynamic overwrite replaces partitions implicitly. To overwrite explicitly, use the new `DataFrameWriterV2` API.
 
-{{< hint note >}}
-To migrate from daily to hourly partitioning with transforms, it is not necessary to drop the daily partition field. Keeping the field ensures existing metadata table queries continue to work.
-{{< /hint >}}
+!!! note
+    To migrate from daily to hourly partitioning with transforms, it is not necessary to drop the daily partition field. Keeping the field ensures existing metadata table queries continue to work.
 
-{{< hint danger >}}
-**Dynamic partition overwrite behavior will change** when partitioning changes
-For example, if you partition by days and move to partitioning by hours, overwrites will overwrite hourly partitions but not days anymore.
-{{< /hint >}}
+
+!!! danger
+    **Dynamic partition overwrite behavior will change** when partitioning changes
+    For example, if you partition by days and move to partitioning by hours, overwrites will overwrite hourly partitions but not days anymore.
+
 
 ### `ALTER TABLE ... DROP PARTITION FIELD`
 
@@ -376,7 +363,7 @@ Partition fields can be removed using `DROP PARTITION FIELD`:
 ALTER TABLE prod.db.sample DROP PARTITION FIELD catalog
 ALTER TABLE prod.db.sample DROP PARTITION FIELD bucket(16, id)
 ALTER TABLE prod.db.sample DROP PARTITION FIELD truncate(4, data)
-ALTER TABLE prod.db.sample DROP PARTITION FIELD year(ts)
+ALTER TABLE prod.db.sample DROP PARTITION FIELD years(ts)
 ALTER TABLE prod.db.sample DROP PARTITION FIELD shard
 ```
 
@@ -384,23 +371,23 @@ Note that although the partition is removed, the column will still exist in the 
 
 Dropping a partition field is a metadata operation and does not change any of the existing table data. New data will be written with the new partitioning, but existing data will remain in the old partition layout.
 
-{{< hint danger >}}
-**Dynamic partition overwrite behavior will change** when partitioning changes
-For example, if you partition by days and move to partitioning by hours, overwrites will overwrite hourly partitions but not days anymore.
-{{< /hint >}}
+!!! danger
+    **Dynamic partition overwrite behavior will change** when partitioning changes
+    For example, if you partition by days and move to partitioning by hours, overwrites will overwrite hourly partitions but not days anymore.
 
-{{< hint danger >}}
-Be careful when dropping a partition field because it will change the schema of metadata tables, like `files`, and may cause metadata queries to fail or produce different results.
-{{< /hint >}}
+
+!!! danger
+    Be careful when dropping a partition field because it will change the schema of metadata tables, like `files`, and may cause metadata queries to fail or produce different results.
+
 
 ### `ALTER TABLE ... REPLACE PARTITION FIELD`
 
 A partition field can be replaced by a new partition field in a single metadata update by using `REPLACE PARTITION FIELD`:
 
 ```sql
-ALTER TABLE prod.db.sample REPLACE PARTITION FIELD ts_day WITH day(ts)
+ALTER TABLE prod.db.sample REPLACE PARTITION FIELD ts_day WITH days(ts)
 -- use optional AS keyword to specify a custom name for the new partition field 
-ALTER TABLE prod.db.sample REPLACE PARTITION FIELD ts_day WITH day(ts) AS day_of_ts
+ALTER TABLE prod.db.sample REPLACE PARTITION FIELD ts_day WITH days(ts) AS day_of_ts
 ```
 
 ### `ALTER TABLE ... WRITE ORDERED BY`
@@ -417,9 +404,9 @@ ALTER TABLE prod.db.sample WRITE ORDERED BY category ASC, id DESC
 ALTER TABLE prod.db.sample WRITE ORDERED BY category ASC NULLS LAST, id DESC NULLS FIRST
 ```
 
-{{< hint info >}}
-Table write order does not guarantee data order for queries. It only affects how data is written to the table.
-{{< /hint >}}
+!!! info
+    Table write order does not guarantee data order for queries. It only affects how data is written to the table.
+
 
 `WRITE ORDERED BY` sets a global ordering where rows are ordered across tasks, like using `ORDER BY` in an `INSERT` command:
 
@@ -479,77 +466,43 @@ Note that although the identifier is removed, the column will still exist in the
 
 #### `ALTER TABLE ... CREATE BRANCH`
 
-Branches can be created via the `CREATE BRANCH` statement with the following options:
-* Do not fail if the branch already exists with `IF NOT EXISTS`
-* Update the branch if it already exists with `CREATE OR REPLACE`
-* Create at a snapshot
-* Create with retention
+Branches can be created via the `CREATE BRANCH` statement, which includes 
+the snapshot to create the branch at and an optional retention clause.
 
 ```sql
--- CREATE audit-branch at current snapshot with default retention.
-ALTER TABLE prod.db.sample CREATE BRANCH `audit-branch`
-
--- CREATE audit-branch at current snapshot with default retention if it doesn't exist.
-ALTER TABLE prod.db.sample CREATE BRANCH IF NOT EXISTS `audit-branch`
-
--- CREATE audit-branch at current snapshot with default retention or REPLACE it if it already exists.
-ALTER TABLE prod.db.sample CREATE OR REPLACE BRANCH `audit-branch`
-
 -- CREATE audit-branch at snapshot 1234 with default retention.
-ALTER TABLE prod.db.sample CREATE BRANCH `audit-branch`
+ALTER TABLE prod.db.sample CREATE BRANCH audit-branch
 AS OF VERSION 1234
 
--- CREATE audit-branch at snapshot 1234, retain audit-branch for 31 days, and retain the latest 31 days. The latest 3 snapshot snapshots, and 2 days worth of snapshots. 
-ALTER TABLE prod.db.sample CREATE BRANCH `audit-branch`
+-- CREATE audit-branch at snapshot 1234, retain audit-branch for 31 days, and retain the latest 31 days. The latest 3 snapshot snapshots, and 2 days worth of snapshots 
+ALTER TABLE prod.db.sample CREATE BRANCH audit-branch
 AS OF VERSION 1234 RETAIN 30 DAYS 
-WITH SNAPSHOT RETENTION 3 SNAPSHOTS 2 DAYS
+WITH RETENTION 3 SNAPSHOTS 2 DAYS
 ```
+
 
 #### `ALTER TABLE ... CREATE TAG`
 
-Tags can be created via the `CREATE TAG` statement with the following options:
-* Do not fail if the tag already exists with `IF NOT EXISTS`
-* Update the tag if it already exists with `CREATE OR REPLACE`
-* Create at a snapshot
-* Create with retention
+Tags can be created via the `CREATE TAG` statement, which includes 
+the snapshot to create the branch at and an optional retention clause.
 
 ```sql
--- CREATE historical-tag at current snapshot with default retention.
-ALTER TABLE prod.db.sample CREATE TAG `historical-tag`
-
--- CREATE historical-tag at current snapshot with default retention if it doesn't exist.
-ALTER TABLE prod.db.sample CREATE TAG IF NOT EXISTS `historical-tag`
-
--- CREATE historical-tag at current snapshot with default retention or REPLACE it if it already exists.
-ALTER TABLE prod.db.sample CREATE OR REPLACE TAG `historical-tag`
-
 -- CREATE historical-tag at snapshot 1234 with default retention.
-ALTER TABLE prod.db.sample CREATE TAG `historical-tag` AS OF VERSION 1234
+ALTER TABLE prod.db.sample CREATE TAG historical-tag AS OF VERSION 1234
 
 -- CREATE historical-tag at snapshot 1234 and retain it for 1 year. 
-ALTER TABLE prod.db.sample CREATE TAG `historical-tag` 
+ALTER TABLE prod.db.sample CREATE TAG historical-tag 
 AS OF VERSION 1234 RETAIN 365 DAYS
 ```
 
-#### `ALTER TABLE ... REPLACE BRANCH`
+### `ALTER TABLE ... REPLACE BRANCH`
 
 The snapshot which a branch references can be updated via
 the `REPLACE BRANCH` sql. Retention can also be updated in this statement. 
 
 ```sql
--- REPLACE audit-branch to reference snapshot 4567 and update the retention to 60 days.
-ALTER TABLE prod.db.sample REPLACE BRANCH `audit-branch`
-AS OF VERSION 4567 RETAIN 60 DAYS
-```
-
-#### `ALTER TABLE ... REPLACE TAG`
-
-The snapshot which a tag references can be updated via
-the `REPLACE TAG` sql. Retention can also be updated in this statement.
-
-```sql
--- REPLACE historical-tag to reference snapshot 4567 and update the retention to 60 days.
-ALTER TABLE prod.db.sample REPLACE TAG `historical-tag`
+-- REPLACE audit-branch to reference snapshot 4567 and update the retention to 60 days
+ALTER TABLE prod.db.sample REPLACE BRANCH audit-branch
 AS OF VERSION 4567 RETAIN 60 DAYS
 ```
 
@@ -558,7 +511,7 @@ AS OF VERSION 4567 RETAIN 60 DAYS
 Branches can be removed via the `DROP BRANCH` sql
 
 ```sql
-ALTER TABLE prod.db.sample DROP BRANCH `audit-branch`
+ALTER TABLE prod.db.sample DROP BRANCH audit-branch
 ```
 
 #### `ALTER TABLE ... DROP TAG`
@@ -566,5 +519,5 @@ ALTER TABLE prod.db.sample DROP BRANCH `audit-branch`
 Tags can be removed via the `DROP TAG` sql
 
 ```sql
-ALTER TABLE prod.db.sample DROP TAG `historical-tag`
+ALTER TABLE prod.db.sample DROP TAG historical-tag
 ```

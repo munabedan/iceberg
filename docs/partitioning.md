@@ -1,13 +1,7 @@
 ---
 title: Partitioning
-url: partitioning
-aliases:
-    - "tables/partitioning"
-menu:
-    main:
-        parent: Tables
-        identifier: tables_partitioning
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -98,6 +92,6 @@ Because Iceberg doesn't require user-maintained partition columns, it can hide p
 
 Most importantly, queries no longer depend on a table's physical layout. With a separation between physical and logical, Iceberg tables can evolve partition schemes over time as data volume changes. Misconfigured tables can be fixed without an expensive migration.
 
-For details about all the supported hidden partition transformations, see the [Partition Transforms](../../../spec/#partition-transforms) section.
+For details about all the supported hidden partition transformations, see the [Partition Transforms](../../spec.md#partition-transforms) section.
 
-For details about updating a table's partition spec, see the [partition evolution](../evolution/#partition-evolution) section.
+For details about updating a table's partition spec, see the [partition evolution](evolution.md#partition-evolution) section.

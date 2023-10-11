@@ -1,13 +1,7 @@
 ---
 title: "Flink Writes"
-url: flink-writes
-aliases:
-    - "flink/flink-writes"
-menu:
-    main:
-        parent: Flink
-        identifier: flink_writes
-        weight: 400
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -69,22 +63,22 @@ Iceberg supports `UPSERT` based on the primary key when writing data into v2 tab
 
 ```sql
 CREATE TABLE `hive_catalog`.`default`.`sample` (
-    `id`  INT UNIQUE COMMENT 'unique id',
-    `data` STRING NOT NULL,
-    PRIMARY KEY(`id`) NOT ENFORCED
+  `id`  INT UNIQUE COMMENT 'unique id',
+  `data` STRING NOT NULL,
+ PRIMARY KEY(`id`) NOT ENFORCED
 ) with ('format-version'='2', 'write.upsert.enabled'='true');
 ```
 
-2. Enabling `UPSERT` mode using `upsert-enabled` in the [write options](#Write-options) provides more flexibility than a table level config. Note that you still need to use v2 table format and specify the primary key when creating the table.
+2. Enabling `UPSERT` mode using `upsert-enabled` in the [write options](#write-options) provides more flexibility than a table level config. Note that you still need to use v2 table format and specify the primary key when creating the table.
 
 ```sql
 INSERT INTO tableName /*+ OPTIONS('upsert-enabled'='true') */
 ...
 ```
 
-{{< hint info >}}
-OVERWRITE and UPSERT can't be set together. In UPSERT mode, if the table is partitioned, the partition fields should be included in equality fields.
-{{< /hint >}}
+!!! info
+    OVERWRITE and UPSERT can't be set together. In UPSERT mode, if the table is partitioned, the partition fields should be included in equality fields.
+
 
 
 
@@ -151,9 +145,9 @@ FlinkSink.forRowData(input)
 env.execute("Test Iceberg DataStream");
 ```
 
-{{< hint info >}}
-OVERWRITE and UPSERT can't be set together. In UPSERT mode, if the table is partitioned, the partition fields should be included in equality fields.
-{{< /hint >}}
+!!! info
+    OVERWRITE and UPSERT can't be set together. In UPSERT mode, if the table is partitioned, the partition fields should be included in equality fields.
+
 
 ### Write with Avro GenericRecord
 
@@ -193,7 +187,7 @@ FlinkSink.builderFor(
 
 ### Branch Writes
 Writing to branches in Iceberg tables is also supported via the `toBranch` API in `FlinkSink`
-For more information on branches please refer to [branches](../tables/branching).
+For more information on branches please refer to [branches](branching.md).
 ```java
 FlinkSink.forRowData(input)
     .tableLoader(tableLoader)
@@ -270,4 +264,4 @@ INSERT INTO tableName /*+ OPTIONS('upsert-enabled'='true') */
 ...
 ```
 
-Check out all the options here: [write-options](/flink-configuration#write-options) 
+Check out all the options here: [write-options](flink-configuration.md#write-options) 

@@ -1,13 +1,7 @@
 ---
 title: "Java Quickstart"
-url: java-api-quickstart
-aliases:
-    - "java/quickstart"
-menu:
-    main:
-        parent: "API"
-        identifier: java_api_quickstart
-        weight: 100
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -30,13 +24,13 @@ menu:
 
 ## Create a table
 
-Tables are created using either a [`Catalog`](../../../javadoc/{{% icebergVersion %}}/index.html?org/apache/iceberg/catalog/Catalog.html) or an implementation of the [`Tables`](../../../javadoc/{{% icebergVersion %}}/index.html?org/apache/iceberg/Tables.html) interface.
+Tables are created using either a [`Catalog`](../../javadoc/{{ icebergVersion }}/index.html?org/apache/iceberg/catalog/Catalog.html) or an implementation of the [`Tables`](../../javadoc/{{ icebergVersion }}/index.html?org/apache/iceberg/Tables.html) interface.
 
 ### Using a Hive catalog
 
 The Hive catalog connects to a Hive metastore to keep track of Iceberg tables.
 You can initialize a Hive catalog with a name and some properties.
-(see: [Catalog properties](../configuration/#catalog-properties))
+(see: [Catalog properties](configuration.md#catalog-properties))
 
 **Note:** Currently, `setConf` is always required for hive catalogs, but this will change in the future.
 
@@ -121,9 +115,9 @@ Table table = tables.create(schema, spec, table_location);
 // Table table = tables.load(table_location);
 ```
 
-{{< hint danger >}}
-Hadoop tables shouldn't be used with file systems that do not support atomic rename. Iceberg relies on rename to synchronize concurrent commits for directory tables.
-{{< /hint >}}
+!!! danger
+    Hadoop tables shouldn't be used with file systems that do not support atomic rename. Iceberg relies on rename to synchronize concurrent commits for directory tables.
+
 
 ### Tables in Spark
 
@@ -131,9 +125,9 @@ Spark uses both `HiveCatalog` and `HadoopTables` to load tables. Hive is used wh
 
 To read and write to tables from Spark see:
 
-* [SQL queries in Spark](../spark-queries#querying-with-sql)
-* [`INSERT INTO` in Spark](../spark-writes#insert-into)
-* [`MERGE INTO` in Spark](../spark-writes#merge-into)
+* [SQL queries in Spark](spark-queries.md#querying-with-sql)
+* [`INSERT INTO` in Spark](spark-writes.md#insert-into)
+* [`MERGE INTO` in Spark](spark-writes.md#merge-into)
 
 
 ## Schemas
@@ -198,7 +192,7 @@ PartitionSpec spec = PartitionSpec.builderFor(schema)
       .build();
 ```
 
-For more information on the different partition transforms that Iceberg offers, visit [this page](../../../spec#partitioning).
+For more information on the different partition transforms that Iceberg offers, visit [this page](../../spec.md#partitioning).
 
 ## Branching and Tagging
 
@@ -229,7 +223,7 @@ table.manageSnapshots()
 
 ### Committing to branches
 
-Writing to a branch can be performed by specifying `toBranch` in the operation. For the full list refer to [UpdateOperations](../../java/api/#update-operations). 
+Writing to a branch can be performed by specifying `toBranch` in the operation. For the full list refer to [UpdateOperations](api.md#update-operations). 
 ```java
 // Append FILE_A to branch test-branch 
 String branch = "test-branch";

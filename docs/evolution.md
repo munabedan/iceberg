@@ -1,13 +1,7 @@
 ---
 title: Evolution
-url: evolution
-aliases:
-    - "tables/evolution"
-menu:
-    main:
-        parent: Tables
-        identifier: tables_evolution
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -67,10 +61,10 @@ Iceberg table partitioning can be updated in an existing table because queries d
 
 When you evolve a partition spec, the old data written with an earlier spec remains unchanged. New data is written using the new spec in a new layout. Metadata for each of the partition versions is kept separately. Because of this, when you start writing queries, you get split planning. This is where each partition layout plans files separately using the filter it derives for that specific partition layout. Here's a visual representation of a contrived example: 
 
-![Partition evolution diagram](../img/partition-spec-evolution.png)
+![Partition evolution diagram](assets/images/partition-spec-evolution.png)
 *The data for 2008 is partitioned by month. Starting from 2009 the table is updated so that the data is instead partitioned by day. Both partitioning layouts are able to coexist in the same table.*
 
-Iceberg uses [hidden partitioning](../partitioning), so you don't *need* to write queries for a specific partition layout to be fast. Instead, you can write queries that select the data you need, and Iceberg automatically prunes out files that don't contain matching data.
+Iceberg uses [hidden partitioning](partitioning.md), so you don't *need* to write queries for a specific partition layout to be fast. Instead, you can write queries that select the data you need, and Iceberg automatically prunes out files that don't contain matching data.
 
 Partition evolution is a metadata operation and does not eagerly rewrite files.
 
@@ -85,7 +79,7 @@ sampleTable.updateSpec()
     .commit();
 ```
 
-Spark supports updating partition spec through its `ALTER TABLE` SQL statement, see more details in [Spark SQL](../spark-ddl/#alter-table--add-partition-field).
+Spark supports updating partition spec through its `ALTER TABLE` SQL statement, see more details in [Spark SQL](spark-ddl.md#alter-table-add-partition-field).
 
 ## Sort order evolution
 
@@ -106,4 +100,4 @@ sampleTable.replaceSortOrder()
    .commit();
 ```
 
-Spark supports updating sort order through its `ALTER TABLE` SQL statement, see more details in [Spark SQL](../spark-ddl/#alter-table--write-ordered-by).
+Spark supports updating sort order through its `ALTER TABLE` SQL statement, see more details in [Spark SQL](spark-ddl.md#alter-table-write-ordered-by).

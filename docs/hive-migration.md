@@ -1,11 +1,7 @@
 ---
 title: "Hive Migration"
-url: hive-migration
-menu:
-  main:
-    parent: "Migration"
-    identifier: hive_migration
-    weight: 200
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -34,21 +30,21 @@ After the initial migration, any new data files are added to the new Iceberg tab
 
 ## Enabling Migration from Hive to Iceberg
 The Hive table migration actions are supported by the Spark Integration module via Spark Procedures. 
-The procedures are bundled in the Spark runtime jar, which is available in the [Iceberg Release Downloads](https://iceberg.apache.org/releases/#downloads).
+The procedures are bundled in the Spark runtime jar, which is available in the [Iceberg Release Downloads](../../releases.md#downloads).
 
 ## Snapshot Hive Table to Iceberg
 To snapshot a Hive table, users can run the following Spark SQL:
 ```sql
 CALL catalog_name.system.snapshot('db.source', 'db.dest')
 ```
-See [Spark Procedure: snapshot](../spark-procedures/#snapshot) for more details.
+See [Spark Procedure: snapshot](spark-procedures.md#snapshot) for more details.
 
 ## Migrate Hive Table To Iceberg
 To migrate a Hive table to Iceberg, users can run the following Spark SQL:
 ```sql
 CALL catalog_name.system.migrate('db.sample')
 ```
-See [Spark Procedure: migrate](../spark-procedures/#migrate) for more details.
+See [Spark Procedure: migrate](spark-procedures.md#migrate) for more details.
 
 ## Add Files From Hive Table to Iceberg
 To add data files from a Hive table to a given Iceberg table, users can run the following Spark SQL:
@@ -58,4 +54,4 @@ table => 'db.tbl',
 source_table => 'db.src_tbl'
 )
 ```
-See [Spark Procedure: add_files](../spark-procedures/#add_files) for more details.
+See [Spark Procedure: add_files](spark-procedures.md#add_files) for more details.

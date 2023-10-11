@@ -1,13 +1,7 @@
 ---
 title: "Writes"
-url: spark-writes
-aliases:
-    - "spark/spark-writes"
-menu:
-    main:
-        parent: Spark
-        identifier: spark_writes
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,22 +22,22 @@ menu:
 
 # Spark Writes
 
-To use Iceberg in Spark, first configure [Spark catalogs](../spark-configuration).
+To use Iceberg in Spark, first configure [Spark catalogs](spark-configuration.md).
 
-Some plans are only available when using [Iceberg SQL extensions](../spark-configuration#sql-extensions) in Spark 3.
+Some plans are only available when using [Iceberg SQL extensions](spark-configuration.md#sql-extensions) in Spark 3.
 
 Iceberg uses Apache Spark's DataSourceV2 API for data source and catalog implementations. Spark DSv2 is an evolving API with different levels of support in Spark versions:
 
-| Feature support                                  | Spark 3 | Notes                                                                       |
-|--------------------------------------------------|-----------|-----------------------------------------------------------------------------|
-| [SQL insert into](#insert-into)                  | ✔️        | ⚠ Requires `spark.sql.storeAssignmentPolicy=ANSI` (default since Spark 3.0) |
-| [SQL merge into](#merge-into)                    | ✔️        | ⚠ Requires Iceberg Spark extensions                                         |
-| [SQL insert overwrite](#insert-overwrite)        | ✔️        | ⚠ Requires `spark.sql.storeAssignmentPolicy=ANSI` (default since Spark 3.0) |
-| [SQL delete from](#delete-from)                  | ✔️        | ⚠ Row-level delete requires Iceberg Spark extensions                        |
-| [SQL update](#update)                            | ✔️        | ⚠ Requires Iceberg Spark extensions                                         |
-| [DataFrame append](#appending-data)              | ✔️        |                                                                             |
-| [DataFrame overwrite](#overwriting-data)         | ✔️        |                                                                             |
-| [DataFrame CTAS and RTAS](#creating-tables)      | ✔️        | ⚠ Requires DSv2 API                                                         |
+| Feature support                                  | Spark 3 | Notes                                        |
+|--------------------------------------------------|-----------|----------------------------------------------|
+| [SQL insert into](#insert-into)                  | ✔️        |                                              |
+| [SQL merge into](#merge-into)                    | ✔️        | ⚠ Requires Iceberg Spark extensions          |
+| [SQL insert overwrite](#insert-overwrite)        | ✔️        |                                              |
+| [SQL delete from](#delete-from)                  | ✔️        | ⚠ Row-level delete requires Spark extensions |
+| [SQL update](#update)                            | ✔️        | ⚠ Requires Iceberg Spark extensions          |
+| [DataFrame append](#appending-data)              | ✔️        |                                              |
+| [DataFrame overwrite](#overwriting-data)         | ✔️        |                                              |
+| [DataFrame CTAS and RTAS](#creating-tables)      | ✔️        |                                              |
 
 
 ## Writing with SQL
@@ -184,6 +178,8 @@ If the delete filter matches entire partitions of the table, Iceberg will perfor
 
 ### `UPDATE`
 
+Spark 3.1 added support for `UPDATE` queries that update matching rows in tables.
+
 Update queries accept a filter to match rows to update.
 
 ```sql
@@ -208,7 +204,7 @@ Branch writes can also be performed as part of a write-audit-publish (WAP) workf
 Note WAP branch and branch identifier cannot both be specified.
 Also, the branch must exist before performing the write. 
 The operation does **not** create the branch if it does not exist. 
-For more information on branches please refer to [branches](../tables/branching)
+For more information on branches please refer to [branches](branching.md).
  
 ```sql
 -- INSERT (1,' a') (2, 'b') into the audit branch.
@@ -248,10 +244,10 @@ Spark 3 introduced the new `DataFrameWriterV2` API for writing to tables using d
 
 The v1 DataFrame `write` API is still supported, but is not recommended.
 
-{{< hint danger >}}
-When writing with the v1 DataFrame API in Spark 3, use `saveAsTable` or `insertInto` to load tables with a catalog.
-Using `format("iceberg")` loads an isolated table reference that will not automatically refresh tables used by queries.
-{{< /hint >}}
+!!! danger
+    When writing with the v1 DataFrame API in Spark 3, use `saveAsTable` or `insertInto` to load tables with a catalog.
+    Using `format("iceberg")` loads an isolated table reference that will not automatically refresh tables used by queries.
+
 
 
 ### Appending data
@@ -311,33 +307,6 @@ data.writeTo("prod.db.table")
     .createOrReplace()
 ```
 
-### Schema Merge
-
-While inserting or updating Iceberg is capable of resolving schema mismatch at runtime. If configured, Iceberg will perform an automatic schema evolution as follows:
-
-
-* A new column is present in the source but not in the target table.
-    
-  The new column is added to the target table. Column values are set to `NULL` in all the rows already present in the table
-
-* A column is present in the target but not in the source. 
-
-  The target column value is set to `NULL` when inserting or left unchanged when updating the row.
-
-The target table must be configured to accept any schema change by setting the property `write.spark.accept-any-schema` to `true`.
-
-```sql
-ALTER TABLE prod.db.sample SET TBLPROPERTIES (
-  'write.spark.accept-any-schema'='true'
-)
-```
-The writer must enable the `mergeSchema` option.
-
-```scala
-data.writeTo("prod.db.sample").option("mergeSchema","true").append()
-```
-
-
 ## Writing Distribution Modes
 
 Iceberg's default Spark writers require that the data in each spark task is clustered by partition values. This 
@@ -394,7 +363,7 @@ sort-order. Further division and coalescing of tasks may take place because of
 
 When writing data to Iceberg with Spark, it's important to note that Spark cannot write a file larger than a Spark 
 task and a file cannot span an Iceberg partition boundary. This means although Iceberg will always roll over a file 
-when it grows to [`write.target-file-size-bytes`](../configuration/#write-properties), but unless the Spark task is 
+when it grows to [`write.target-file-size-bytes`](configuration.md#write-properties), but unless the Spark task is 
 large enough that will not happen. The size of the file created on disk will also be much smaller than the Spark task 
 since the on disk data will be both compressed and in columnar format as opposed to Spark's uncompressed row 
 representation. This means a 100 megabyte Spark task will create a file much smaller than 100 megabytes even if that
@@ -422,33 +391,32 @@ so you may want to understand the type conversion in Iceberg in prior to design 
 
 This type conversion table describes how Spark types are converted to the Iceberg types. The conversion applies on both creating Iceberg table and writing to Iceberg table via Spark.
 
-| Spark           | Iceberg                    | Notes |
-|-----------------|----------------------------|-------|
-| boolean         | boolean                    |       |
-| short           | integer                    |       |
-| byte            | integer                    |       |
-| integer         | integer                    |       |
-| long            | long                       |       |
-| float           | float                      |       |
-| double          | double                     |       |
-| date            | date                       |       |
-| timestamp       | timestamp with timezone    |       |
-| timestamp_ntz    | timestamp without timezone |       |
-| char            | string                     |       |
-| varchar         | string                     |       |
-| string          | string                     |       |
-| binary          | binary                     |       |
-| decimal         | decimal                    |       |
-| struct          | struct                     |       |
-| array           | list                       |       |
-| map             | map                        |       |
+| Spark           | Iceberg                 | Notes |
+|-----------------|-------------------------|-------|
+| boolean         | boolean                 |       |
+| short           | integer                 |       |
+| byte            | integer                 |       |
+| integer         | integer                 |       |
+| long            | long                    |       |
+| float           | float                   |       |
+| double          | double                  |       |
+| date            | date                    |       |
+| timestamp       | timestamp with timezone |       |
+| char            | string                  |       |
+| varchar         | string                  |       |
+| string          | string                  |       |
+| binary          | binary                  |       |
+| decimal         | decimal                 |       |
+| struct          | struct                  |       |
+| array           | list                    |       |
+| map             | map                     |       |
 
-{{< hint info >}}
-The table is based on representing conversion during creating table. In fact, broader supports are applied on write. Here're some points on write:
+!!! info
+    The table is based on representing conversion during creating table. In fact, broader supports are applied on write. Here're some points on write:
+    
+    * Iceberg numeric types (`integer`, `long`, `float`, `double`, `decimal`) support promotion during writes. e.g. You can write Spark types `short`, `byte`, `integer`, `long` to Iceberg type `long`.
+    * You can write to Iceberg `fixed` type using Spark `binary` type. Note that assertion on the length will be performed.
 
-* Iceberg numeric types (`integer`, `long`, `float`, `double`, `decimal`) support promotion during writes. e.g. You can write Spark types `short`, `byte`, `integer`, `long` to Iceberg type `long`.
-* You can write to Iceberg `fixed` type using Spark `binary` type. Note that assertion on the length will be performed.
-{{< /hint >}}
 
 ### Iceberg type to Spark type
 
@@ -464,7 +432,7 @@ This type conversion table describes how Iceberg types are converted to the Spar
 | date                       | date                    |               |
 | time                       |                         | Not supported |
 | timestamp with timezone    | timestamp               |               |
-| timestamp without timezone | timestamp_ntz            |               |
+| timestamp without timezone |                         | Not supported |
 | string                     | string                  |               |
 | uuid                       | string                  |               |
 | fixed                      | binary                  |               |

@@ -1,13 +1,7 @@
 ---
 title: Maintenance
-url: maintenance
-aliases:
-    - "tables/maintenance"
-menu:
-    main:
-        parent: Tables
-        identifier: tables_maintenance
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,16 +22,16 @@ menu:
 
 # Maintenance
 
-{{< hint info >}}
-Maintenance operations require the `Table` instance. Please refer [Java API quickstart](../java-api-quickstart/#create-a-table) page to refer how to load an existing table.
-{{< /hint >}}
+!!! info
+    Maintenance operations require the `Table` instance. Please refer [Java API quickstart](java-api-quickstart.md#create-a-table) page to refer how to load an existing table.
+
 ## Recommended Maintenance
 
 ### Expire Snapshots
 
 Each write to an Iceberg table creates a new _snapshot_, or version, of a table. Snapshots can be used for time-travel queries, or the table can be rolled back to any valid snapshot.
 
-Snapshots accumulate until they are expired by the [`expireSnapshots`](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/Table.html#expireSnapshots--) operation. Regularly expiring snapshots is recommended to delete data files that are no longer needed, and to keep the size of table metadata small.
+Snapshots accumulate until they are expired by the [`expireSnapshots`](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/Table.html#expireSnapshots--) operation. Regularly expiring snapshots is recommended to delete data files that are no longer needed, and to keep the size of table metadata small.
 
 This example expires snapshots that are older than 1 day:
 
@@ -49,7 +43,7 @@ table.expireSnapshots()
      .commit();
 ```
 
-See the [`ExpireSnapshots` Javadoc](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/ExpireSnapshots.html) to see more configuration options.
+See the [`ExpireSnapshots` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/ExpireSnapshots.html) to see more configuration options.
 
 There is also a Spark action that can run table expiration in parallel for large tables:
 
@@ -64,10 +58,10 @@ SparkActions
 
 Expiring old snapshots removes them from metadata, so they are no longer available for time travel queries.
 
-{{< hint info >}}
-Data files are not deleted until they are no longer referenced by a snapshot that may be used for time travel or rollback.
-Regularly expiring snapshots deletes unused data files.
-{{< /hint >}}
+!!! info
+    Data files are not deleted until they are no longer referenced by a snapshot that may be used for time travel or rollback.
+    Regularly expiring snapshots deletes unused data files.
+
 
 ### Remove old metadata files
 
@@ -86,7 +80,7 @@ Note that this will only delete metadata files that are **tracked** in the metad
 Example: With `write.metadata.delete-after-commit.enabled=false` and `write.metadata.previous-versions-max=10`, one will have 10 tracked metadata files and 90 orphaned metadata files after 100 commits.
 Configuring `write.metadata.delete-after-commit.enabled=true` and `write.metadata.previous-versions-max=20` will not automatically delete metadata files. Tracked metadata files would be deleted again when reaching `write.metadata.previous-versions-max=20`.
 
-See [table write properties](../configuration/#write-properties) for more details.
+See [table write properties](configuration.md#write-properties) for more details.
 
 ### Delete orphan files
 
@@ -102,22 +96,22 @@ SparkActions
     .execute();
 ```
 
-See the [DeleteOrphanFiles Javadoc](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/actions/DeleteOrphanFiles.html) to see more configuration options.
+See the [DeleteOrphanFiles Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/DeleteOrphanFiles.html) to see more configuration options.
 
 This action may take a long time to finish if you have lots of files in data and metadata directories. It is recommended to execute this periodically, but you may not need to execute this often.
 
-{{< hint info >}}
-It is dangerous to remove orphan files with a retention interval shorter than the time expected for any write to complete because it
-might corrupt the table if in-progress files are considered orphaned and are deleted. The default interval is 3 days.
-{{< /hint >}}
+!!! info
+    It is dangerous to remove orphan files with a retention interval shorter than the time expected for any write to complete because it
+    might corrupt the table if in-progress files are considered orphaned and are deleted. The default interval is 3 days.
+
     
-{{< hint info >}}
-Iceberg uses the string representations of paths when determining which files need to be removed. On some file systems,
-the path can change over time, but it still represents the same file. For example, if you change authorities for an HDFS cluster, 
-none of the old path urls used during creation will match those that appear in a current listing. *This will lead to data loss when 
-RemoveOrphanFiles is run*. Please be sure the entries in your MetadataTables match those listed by the Hadoop
-FileSystem API to avoid unintentional deletion. 
-{{< /hint >}}
+!!! info
+    Iceberg uses the string representations of paths when determining which files need to be removed. On some file systems,
+    the path can change over time, but it still represents the same file. For example, if you change authorities for an HDFS cluster, 
+    none of the old path urls used during creation will match those that appear in a current listing. *This will lead to data loss when 
+    RemoveOrphanFiles is run*. Please be sure the entries in your MetadataTables match those listed by the Hadoop
+    FileSystem API to avoid unintentional deletion. 
+
 
 ## Optional Maintenance
 
@@ -141,7 +135,7 @@ SparkActions
 
 The `files` metadata table is useful for inspecting data file sizes and determining when to compact partitions.
 
-See the [`RewriteDataFiles` Javadoc](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/actions/RewriteDataFiles.html) to see more configuration options.
+See the [`RewriteDataFiles` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/RewriteDataFiles.html) to see more configuration options.
 
 ### Rewrite manifests
 
@@ -162,4 +156,4 @@ SparkActions
     .execute();
 ```
 
-See the [`RewriteManifests` Javadoc](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/actions/RewriteManifests.html) to see more configuration options.
+See the [`RewriteManifests` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/RewriteManifests.html) to see more configuration options.

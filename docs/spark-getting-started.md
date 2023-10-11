@@ -1,14 +1,7 @@
 ---
 title: "Getting Started"
-weight: 200
-url: getting-started
-aliases:
-    - "spark/getting-started"
-menu:
-    main:
-        parent: Spark
-        identifier: spark_getting_started
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,32 +22,32 @@ menu:
 
 # Getting Started
 
-The latest version of Iceberg is [{{% icebergVersion %}}](../../../releases).
+The latest version of Iceberg is [{{ icebergVersion }}](../../releases.md).
 
 Spark is currently the most feature-rich compute engine for Iceberg operations. 
 We recommend you to get started with Spark to understand Iceberg concepts and features with examples.
-You can also view documentations of using Iceberg with other compute engine under the [Multi-Engine Support](https://iceberg.apache.org/multi-engine-support) page.
+You can also view documentations of using Iceberg with other compute engine under the [Multi-Engine Support](../../multi-engine-support.md) page.
 
 ## Using Iceberg in Spark 3
 
 To use Iceberg in a Spark shell, use the `--packages` option:
 
 ```sh
-spark-shell --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{% icebergVersion %}}
+spark-shell --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{ icebergVersion }}
 ```
 
-{{< hint info >}}
-If you want to include Iceberg in your Spark installation, add the [`iceberg-spark-runtime-3.2_2.12` Jar](https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.2_2.12/{{% icebergVersion %}}/iceberg-spark-runtime-3.2_2.12-{{% icebergVersion %}}.jar) to Spark's `jars` folder.
-{{< /hint >}}
+!!! info
+    If you want to include Iceberg in your Spark installation, add the [`iceberg-spark-runtime-3.2_2.12` Jar](https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.2_2.12/{{ icebergVersion }}/iceberg-spark-runtime-3.2_2.12-{{ icebergVersion }}.jar) to Spark's `jars` folder.
+
 
 ### Adding catalogs
 
-Iceberg comes with [catalogs](../spark-configuration#catalogs) that enable SQL commands to manage tables and load them by name. Catalogs are configured using properties under `spark.sql.catalog.(catalog_name)`.
+Iceberg comes with [catalogs](spark-configuration.md#catalogs) that enable SQL commands to manage tables and load them by name. Catalogs are configured using properties under `spark.sql.catalog.(catalog_name)`.
 
 This command creates a path-based catalog named `local` for tables under `$PWD/warehouse` and adds support for Iceberg tables to Spark's built-in catalog:
 
 ```sh
-spark-sql --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{% icebergVersion %}}\
+spark-sql --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{ icebergVersion }}\
     --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
     --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog \
     --conf spark.sql.catalog.spark_catalog.type=hive \
@@ -65,7 +58,7 @@ spark-sql --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:{{% icebe
 
 ### Creating a table
 
-To create your first Iceberg table in Spark, use the `spark-sql` shell or `spark.sql(...)` to run a [`CREATE TABLE`](../spark-ddl#create-table) command:
+To create your first Iceberg table in Spark, use the `spark-sql` shell or `spark.sql(...)` to run a [`CREATE TABLE`](spark-ddl.md#create-table) command:
 
 ```sql
 -- local is the path-based catalog defined above
@@ -74,21 +67,21 @@ CREATE TABLE local.db.table (id bigint, data string) USING iceberg
 
 Iceberg catalogs support the full range of SQL DDL commands, including:
 
-* [`CREATE TABLE ... PARTITIONED BY`](../spark-ddl#create-table)
-* [`CREATE TABLE ... AS SELECT`](../spark-ddl#create-table--as-select)
-* [`ALTER TABLE`](../spark-ddl#alter-table)
-* [`DROP TABLE`](../spark-ddl#drop-table)
+* [`CREATE TABLE ... PARTITIONED BY`](spark-ddl.md#create-table)
+* [`CREATE TABLE ... AS SELECT`](spark-ddl.md#create-table-as-select)
+* [`ALTER TABLE`](spark-ddl.md#alter-table)
+* [`DROP TABLE`](spark-ddl.md#drop-table)
 
 ### Writing
 
-Once your table is created, insert data using [`INSERT INTO`](../spark-writes#insert-into):
+Once your table is created, insert data using [`INSERT INTO`](spark-writes.md#insert-into):
 
 ```sql
 INSERT INTO local.db.table VALUES (1, 'a'), (2, 'b'), (3, 'c');
 INSERT INTO local.db.table SELECT id, data FROM source WHERE length(data) = 1;
 ```
 
-Iceberg also adds row-level SQL updates to Spark, [`MERGE INTO`](../spark-writes#merge-into) and [`DELETE FROM`](../spark-writes#delete-from):
+Iceberg also adds row-level SQL updates to Spark, [`MERGE INTO`](spark-writes.md#merge-into) and [`DELETE FROM`](spark-writes.md#delete-from):
 
 ```sql
 MERGE INTO local.db.target t USING (SELECT * FROM updates) u ON t.id = u.id
@@ -96,7 +89,7 @@ WHEN MATCHED THEN UPDATE SET t.count = t.count + u.count
 WHEN NOT MATCHED THEN INSERT *
 ```
 
-Iceberg supports writing DataFrames using the new [v2 DataFrame write API](../spark-writes#writing-with-dataframes):
+Iceberg supports writing DataFrames using the new [v2 DataFrame write API](spark-writes.md#writing-with-dataframes):
 
 ```scala
 spark.table("source").select("id", "data")
@@ -115,7 +108,7 @@ FROM local.db.table
 GROUP BY data
 ```
 
-SQL is also the recommended way to [inspect tables](../spark-queries#inspecting-tables). To view all of the snapshots in a table, use the `snapshots` metadata table:
+SQL is also the recommended way to [inspect tables](spark-queries.md#inspecting-tables). To view all of the snapshots in a table, use the `snapshots` metadata table:
 ```sql
 SELECT * FROM local.db.table.snapshots
 ```
@@ -130,7 +123,7 @@ SELECT * FROM local.db.table.snapshots
 +-------------------------+----------------+-----------+-----------+----------------------------------------------------+-----+
 ```
 
-[DataFrame reads](../spark-queries#querying-with-dataframes) are supported and can now reference tables by name using `spark.table`:
+[DataFrame reads](spark-queries.md#querying-with-dataframes) are supported and can now reference tables by name using `spark.table`:
 
 ```scala
 val df = spark.table("local.db.table")
@@ -141,7 +134,7 @@ df.count()
 
 Next, you can learn more about Iceberg tables in Spark:
 
-* [DDL commands](../spark-ddl): `CREATE`, `ALTER`, and `DROP`
-* [Querying data](../spark-queries): `SELECT` queries and metadata tables
-* [Writing data](../spark-writes): `INSERT INTO` and `MERGE INTO`
-* [Maintaining tables](../spark-procedures) with stored procedures
+* [DDL commands](spark-ddl.md): `CREATE`, `ALTER`, and `DROP`
+* [Querying data](spark-queries.md): `SELECT` queries and metadata tables
+* [Writing data](spark-writes.md): `INSERT INTO` and `MERGE INTO`
+* [Maintaining tables](spark-procedures.md) with stored procedures

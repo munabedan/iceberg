@@ -1,11 +1,7 @@
 ---
 title: "Dell"
-url: dell
-menu:
-    main:
-        parent: Integrations
-        identifier: dell_integration
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more

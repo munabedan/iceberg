@@ -1,11 +1,7 @@
 ---
 title: "Delta Lake Migration"
-url: delta-lake-migration
-menu:
-  main:
-    parent: "Migration"
-    identifier: delta_lake_migration
-    weight: 300
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -35,9 +31,10 @@ The Add Transaction action, a variant of the Add File action, is still under dev
 
 ## Enabling Migration from Delta Lake to Iceberg
 The `iceberg-delta-lake` module is not bundled with Spark and Flink engine runtimes. To enable migration from delta lake features, the minimum required dependencies are:
-- [iceberg-delta-lake](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-delta-lake/1.2.1/iceberg-delta-lake-1.2.1.jar)
-- [delta-standalone-0.6.0](https://repo1.maven.org/maven2/io/delta/delta-standalone_2.13/0.6.0/delta-standalone_2.13-0.6.0.jar)
-- [delta-storage-2.2.0](https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar)
+
+ - [iceberg-delta-lake](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-delta-lake/1.2.1/iceberg-delta-lake-1.2.1.jar)
+ - [delta-standalone-0.6.0](https://repo1.maven.org/maven2/io/delta/delta-standalone_2.13/0.6.0/delta-standalone_2.13-0.6.0.jar)
+ - [delta-storage-2.2.0](https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar)
 
 ### Compatibilities
 The module is built and tested with `Delta Standalone:0.6.0` and supports Delta Lake tables with the following protocol version:
@@ -67,23 +64,23 @@ Existing data files are added to the Iceberg table's metadata and can be read us
 When inserts or overwrites run on the snapshot, new files are placed in the snapshot table's location. The location is default to be the same as that
 of the source Delta Lake Table. Users can also specify a different location for the snapshot table.
 
-{{< hint info >}}
-Because tables created by `snapshotDeltaLakeTable` are not the sole owners of their data files, they are prohibited from
-actions like `expire_snapshots` which would physically delete data files. Iceberg deletes, which only effect metadata,
-are still allowed. In addition, any operations which affect the original data files will disrupt the Snapshot's
-integrity. DELETE statements executed against the original Delta Lake table will remove original data files and the
-`snapshotDeltaLakeTable` table will no longer be able to access them.
-{{< /hint >}}
+!!! info
+    Because tables created by `snapshotDeltaLakeTable` are not the sole owners of their data files, they are prohibited from
+    actions like `expire_snapshots` which would physically delete data files. Iceberg deletes, which only effect metadata,
+    are still allowed. In addition, any operations which affect the original data files will disrupt the Snapshot's
+    integrity. DELETE statements executed against the original Delta Lake table will remove original data files and the
+    `snapshotDeltaLakeTable` table will no longer be able to access them.
+
 
 #### Usage
 | Required Input               | Configured By                                                                                                                                                                                             | Description                                                                     |
 |------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| Source Table Location        | Argument [`sourceTableLocation`](https://iceberg.apache.org/javadoc/latest/org/apache/iceberg/delta/DeltaLakeToIcebergMigrationActionsProvider.html#snapshotDeltaLakeTable(java.lang.String))             | The location of the source Delta Lake table                                     | 
-| New Iceberg Table Identifier | Configuration API [`as`](https://iceberg.apache.org/javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html#as(org.apache.iceberg.catalog.TableIdentifier))                                   | The identifier specifies the namespace and table name for the new iceberg table |
-| Iceberg Catalog              | Configuration API [`icebergCatalog`](https://iceberg.apache.org/javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html#icebergCatalog(org.apache.iceberg.catalog.Catalog))                   | The catalog used to create the new iceberg table                                |
-| Hadoop Configuration         | Configuration API [`deltaLakeConfiguration`](https://iceberg.apache.org/javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html#deltaLakeConfiguration(org.apache.hadoop.conf.Configuration)) | The Hadoop Configuration used to read the source Delta Lake table.              |
+| Source Table Location        | Argument [`sourceTableLocation`](../../javadoc/latest/org/apache/iceberg/delta/DeltaLakeToIcebergMigrationActionsProvider.html#snapshotDeltaLakeTable(java.lang.String))             | The location of the source Delta Lake table                                     | 
+| New Iceberg Table Identifier | Configuration API [`as`](../../javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html#as(org.apache.iceberg.catalog.TableIdentifier))                                   | The identifier specifies the namespace and table name for the new iceberg table |
+| Iceberg Catalog              | Configuration API [`icebergCatalog`](../../javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html#icebergCatalog(org.apache.iceberg.catalog.Catalog))                   | The catalog used to create the new iceberg table                                |
+| Hadoop Configuration         | Configuration API [`deltaLakeConfiguration`](../../javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html#deltaLakeConfiguration(org.apache.hadoop.conf.Configuration)) | The Hadoop Configuration used to read the source Delta Lake table.              |
 
-For detailed usage and other optional configurations, please refer to the [SnapshotDeltaLakeTable API](https://iceberg.apache.org/javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html)
+For detailed usage and other optional configurations, please refer to the [SnapshotDeltaLakeTable API](../../javadoc/latest/org/apache/iceberg/delta/SnapshotDeltaLakeTable.html)
 
 #### Output
 | Output Name | Type | Description |

@@ -1,13 +1,7 @@
 ---
 title: "Queries"
-url: spark-queries
-aliases:
-    - "spark/spark-queries"
-menu:
-    main:
-        parent: Spark
-        identifier: spark_queries
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,11 +22,11 @@ menu:
 
 # Spark Queries
 
-To use Iceberg in Spark, first configure [Spark catalogs](../spark-configuration). Iceberg uses Apache Spark's DataSourceV2 API for data source and catalog implementations.
+To use Iceberg in Spark, first configure [Spark catalogs](spark-configuration.md). Iceberg uses Apache Spark's DataSourceV2 API for data source and catalog implementations.
 
 ## Querying with SQL
 
-In Spark 3, tables use identifiers that include a [catalog name](../spark-configuration#using-catalogs).
+In Spark 3, tables use identifiers that include a [catalog name](spark-configuration.md#using-catalogs).
 
 ```sql
 SELECT * FROM prod.db.table; -- catalog: prod, namespace: db, table: table
@@ -45,11 +39,12 @@ For example, to read from the `files` metadata table for `prod.db.table`:
 ```sql
 SELECT * FROM prod.db.table.files;
 ```
-|content|file_path                                                                                                                                   |file_format|spec_id|partition|record_count|file_size_in_bytes|column_sizes      |value_counts    |null_value_counts|nan_value_counts|lower_bounds           |upper_bounds           |key_metadata|split_offsets|equality_ids|sort_order_id|
-| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
-| 0 | s3:/.../table/data/00000-3-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET   | 0  | {1999-01-01, 01} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> c] | [1 -> , 2 -> c] | null         | [4]           | null | null |
-| 0 | s3:/.../table/data/00001-4-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET   | 0  | {1999-01-01, 02} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> b] | [1 -> , 2 -> b] | null         | [4]           | null | null |
-| 0 | s3:/.../table/data/00002-5-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET   | 0  | {1999-01-01, 03} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> a] | [1 -> , 2 -> a] | null         | [4]           | null | null |
+
+| content | file_path                                                               | file_format | spec_id | partition        | record_count | file_size_in_bytes | column_sizes       | value_counts     | null_value_counts | nan_value_counts | lower_bounds    | upper_bounds    | key_metadata | split_offsets | equality_ids | sort_order_id |
+| ------- | ----------------------------------------------------------------------- | ----------- | ------- | ---------------- | ------------ | ------------------ | ------------------ | ---------------- | ----------------- | ---------------- | --------------- | --------------- | ------------ | ------------- | ------------ | ------------- |
+| 0       | s3:/.../table/data/00000-3-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET     | 0       | {1999-01-01, 01} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> c] | [1 -> , 2 -> c] | null         | [4]           | null         | null          |
+| 0       | s3:/.../table/data/00001-4-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET     | 0       | {1999-01-01, 02} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> b] | [1 -> , 2 -> b] | null         | [4]           | null         | null          |
+| 0       | s3:/.../table/data/00002-5-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET     | 0       | {1999-01-01, 03} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> a] | [1 -> , 2 -> a] | null         | [4]           | null         | null          |
 
 ## Querying with DataFrames
 
@@ -82,12 +77,12 @@ The above list is in order of priority. For example: a matching catalog will tak
 Spark 3.3 and later supports time travel in SQL queries using `TIMESTAMP AS OF` or `VERSION AS OF` clauses.
 The `VERSION AS OF` clause can contain a long snapshot ID or a string branch or tag name.
 
-{{< hint info >}}
-Note: If the name of a branch or tag is the same as a snapshot ID, then the snapshot which is selected for time travel is the snapshot
-with the given snapshot ID. For example, consider the case where there is a tag named '1' and it references snapshot with ID 2. 
-If the version travel clause is `VERSION AS OF '1'`, time travel will be done to the snapshot with ID 1. 
-If this is not desired, rename the tag or branch with a well-defined prefix such as 'snapshot-1'.
-{{< /hint >}}
+!!! info
+    Note: If the name of a branch or tag is the same as a snapshot ID, then the snapshot which is selected for time travel is the snapshot
+    with the given snapshot ID. For example, consider the case where there is a tag named '1' and it references snapshot with ID 2. 
+    If the version travel clause is `VERSION AS OF '1'`, time travel will be done to the snapshot with ID 1. 
+    If this is not desired, rename the tag or branch with a well-defined prefix such as 'snapshot-1'.
+
 
 ```sql 
 -- time travel to October 26, 1986 at 01:21:00
@@ -161,10 +156,10 @@ spark.read
     .load("path/to/table")
 ```
 
-{{< hint info >}}
-Spark 3.0 and earlier versions do not support using `option` with `table` in DataFrameReader commands. All options will be silently 
-ignored. Do not use `table` when attempting to time-travel or use other options. See [SPARK-32592](https://issues.apache.org/jira/browse/SPARK-32592).
-{{< /hint >}}
+!!! info
+    Spark 3.0 and earlier versions do not support using `option` with `table` in DataFrameReader commands. All options will be silently 
+    ignored. Do not use `table` when attempting to time-travel or use other options. See [SPARK-32592](https://issues.apache.org/jira/browse/SPARK-32592).
+
 
 
 ### Incremental read
@@ -183,11 +178,11 @@ spark.read()
   .load("path/to/table")
 ```
 
-{{< hint info >}}
-Currently gets only the data from `append` operation. Cannot support `replace`, `overwrite`, `delete` operations.
-Incremental read works with both V1 and V2 format-version.
-Incremental read is not supported by Spark's SQL syntax.
-{{< /hint >}}
+!!! info
+    Currently gets only the data from `append` operation. Cannot support `replace`, `overwrite`, `delete` operations.
+    Incremental read works with both V1 and V2 format-version.
+    Incremental read is not supported by Spark's SQL syntax.
+
 
 ## Inspecting tables
 
@@ -195,9 +190,9 @@ To inspect a table's history, snapshots, and other metadata, Iceberg supports me
 
 Metadata tables are identified by adding the metadata table name after the original table name. For example, history for `db.table` is read using `db.table.history`.
 
-{{< hint info >}}
-For Spark 3, prior to 3.2, the Spark [session catalog](../spark-configuration#replacing-the-session-catalog) does not support table names with multipart identifiers such as `catalog.database.table.metadata`. As a workaround, configure an `org.apache.iceberg.spark.SparkCatalog`, or use the Spark `DataFrameReader` API.
-{{< /hint >}}
+!!! info
+    For Spark 3, prior to 3.2, the Spark [session catalog](spark-configuration.md#replacing-the-session-catalog) does not support table names with multipart identifiers such as `catalog.database.table.metadata`. As a workaround, configure an `org.apache.iceberg.spark.SparkCatalog`, or use the Spark `DataFrameReader` API.
+
 
 ### History
 
@@ -216,9 +211,9 @@ SELECT * FROM prod.db.table.history;
 | 2019-02-09 19:42:03.919 | 8924558786060583479 | 2999875608062437330 | true                |
 | 2019-02-09 19:49:16.343 | 6536733823181975045 | 8924558786060583479 | true                |
 
-{{< hint info >}}
-**This shows a commit that was rolled back.** The example has two snapshots with the same parent, and one is *not* an ancestor of the current table state.
-{{< /hint >}}
+!!! info
+    **This shows a commit that was rolled back.** The example has two snapshots with the same parent, and one is *not* an ancestor of the current table state.
+
 
 ### Metadata Log Entries
 
@@ -270,29 +265,17 @@ order by made_current_at
 
 ### Files
 
-To show a table's current files:
+To show a table's current data files:
 
 ```sql
 SELECT * FROM prod.db.table.files;
 ```
 
-| content | file_path | file_format | spec_id | record_count | file_size_in_bytes | column_sizes | value_counts | null_value_counts | nan_value_counts | lower_bounds | upper_bounds | key_metadata | split_offsets | equality_ids | sort_order_id | readable_metrics |
+|content|file_path                                                                                                                                   |file_format|spec_id|partition|record_count|file_size_in_bytes|column_sizes      |value_counts    |null_value_counts|nan_value_counts|lower_bounds           |upper_bounds           |key_metadata|split_offsets|equality_ids|sort_order_id|
 | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
-| 0 | s3:/.../table/data/00042-3-a9aa8b24-20bc-4d56-93b0-6b7675782bb5-00001.parquet | PARQUET | 0 | 1 | 652 | {1:52,2:48} | {1:1,2:1} | {1:0,2:0} | {} | {1:,2:d} | {1:,2:d} | NULL | [4] | NULL | 0 | {"data":{"column_size":48,"value_count":1,"null_value_count":0,"nan_value_count":null,"lower_bound":"d","upper_bound":"d"},"id":{"column_size":52,"value_count":1,"null_value_count":0,"nan_value_count":null,"lower_bound":1,"upper_bound":1}} |
-| 0 | s3:/.../table/data/00000-0-f9709213-22ca-4196-8733-5cb15d2afeb9-00001.parquet | PARQUET | 0 | 1 | 643 | {1:46,2:48} | {1:1,2:1} | {1:0,2:0} | {} | {1:,2:a} | {1:,2:a} | NULL | [4] | NULL | 0 | {"data":{"column_size":48,"value_count":1,"null_value_count":0,"nan_value_count":null,"lower_bound":"a","upper_bound":"a"},"id":{"column_size":46,"value_count":1,"null_value_count":0,"nan_value_count":null,"lower_bound":1,"upper_bound":1}} | 
-| 0 | s3:/.../table/data/00001-1-f9709213-22ca-4196-8733-5cb15d2afeb9-00001.parquet | PARQUET | 0 | 2 | 644 | {1:49,2:51} | {1:2,2:2} | {1:0,2:0} | {} | {1:,2:b} | {1:,2:c} | NULL | [4] | NULL | 0 | {"data":{"column_size":51,"value_count":2,"null_value_count":0,"nan_value_count":null,"lower_bound":"b","upper_bound":"c"},"id":{"column_size":49,"value_count":2,"null_value_count":0,"nan_value_count":null,"lower_bound":2,"upper_bound":3}} |
-| 1 | s3:/.../table/data/00081-4-a9aa8b24-20bc-4d56-93b0-6b7675782bb5-00001-deletes.parquet | PARQUET | 0 | 1 | 1560 | {2147483545:46,2147483546:152} | {2147483545:1,2147483546:1} | {2147483545:0,2147483546:0} | {} | {2147483545:,2147483546:s3:/.../table/data/00000-0-f9709213-22ca-4196-8733-5cb15d2afeb9-00001.parquet} | {2147483545:,2147483546:s3:/.../table/data/00000-0-f9709213-22ca-4196-8733-5cb15d2afeb9-00001.parquet} | NULL | [4] | NULL | NULL | {"data":{"column_size":null,"value_count":null,"null_value_count":null,"nan_value_count":null,"lower_bound":null,"upper_bound":null},"id":{"column_size":null,"value_count":null,"null_value_count":null,"nan_value_count":null,"lower_bound":null,"upper_bound":null}} |
-| 2 | s3:/.../table/data/00047-25-833044d0-127b-415c-b874-038a4f978c29-00612.parquet | PARQUET | 0 | 126506 | 28613985 | {100:135377,101:11314} | {100:126506,101:126506} | {100:105434,101:11} | {} | {100:0,101:17} | {100:404455227527,101:23} | NULL | NULL | [1] | 0 | {"id":{"column_size":135377,"value_count":126506,"null_value_count":105434,"nan_value_count":null,"lower_bound":0,"upper_bound":404455227527},"data":{"column_size":11314,"value_count":126506,"null_value_count": 11,"nan_value_count":null,"lower_bound":17,"upper_bound":23}} |
-
-{{< hint info >}}
-Content refers to type of content stored by the data file:
-  0  Data
-  1  Position Deletes
-  2  Equality Deletes
-{{< /hint >}}
-
-To show only data files or delete files, query `prod.db.table.data_files` and `prod.db.table.delete_files` respectively.
-To show all files, data files and delete files across all tracked snapshots, query `prod.db.table.all_files`, `prod.db.table.all_data_files` and `prod.db.table.all_delete_files` respectively.
+| 0 | s3:/.../table/data/00000-3-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET   | 0  | {1999-01-01, 01} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> c] | [1 -> , 2 -> c] | null         | [4]           | null | null |
+| 0 | s3:/.../table/data/00001-4-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET   | 0  | {1999-01-01, 02} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> b] | [1 -> , 2 -> b] | null         | [4]           | null | null |
+| 0 | s3:/.../table/data/00002-5-8d6d60e8-d427-4809-bcf0-f5d45a4aad96.parquet | PARQUET   | 0  | {1999-01-01, 03} | 1            | 597                | [1 -> 90, 2 -> 62] | [1 -> 1, 2 -> 1] | [1 -> 0, 2 -> 0]  | []               | [1 -> , 2 -> a] | [1 -> , 2 -> a] | null         | [4]           | null | null |
 
 ### Manifests
 
@@ -307,7 +290,7 @@ SELECT * FROM prod.db.table.manifests;
 | s3://.../table/metadata/45b5290b-ee61-4788-b324-b1e2735c0e10-m0.avro | 4479   | 0                 | 6668963634911763636 | 8                      | 0                         | 0                        | [[false,null,2019-05-13,2019-05-15]] |
 
 Note:
-1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../../spec#manifest-lists), with the following order:
+1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../spec.md#manifest-lists), with the following order:
     - `contains_null`
     - `contains_nan`
     - `lower_bound`
@@ -323,15 +306,15 @@ To show a table's current partitions:
 SELECT * FROM prod.db.table.partitions;
 ```
 
-| partition      | spec_id | record_count  | file_count | total_data_file_size_in_bytes | position_delete_record_count | position_delete_file_count | equality_delete_record_count | equality_delete_file_count | last_updated_at(μs) | last_updated_snapshot_id |
-| -------------- |---------|---------------|------------|--------------------------|------------------------------|----------------------------|------------------------------|----------------------------|---------------------|--------------------------|
-| {20211001, 11} | 0       | 1             | 1          | 100                      | 2                            | 1                          | 0                            | 0                          | 1633086034192000    | 9205185327307503337      |
-| {20211002, 11} | 0       | 4             | 3          | 500                      | 1                            | 1                          | 0                            | 0                          | 1633172537358000    | 867027598972211003       |
-| {20211001, 10} | 0       | 7             | 4          | 700                      | 0                            | 0                          | 0                            | 0                          | 1633082598716000    | 3280122546965981531      |
-| {20211002, 10} | 0       | 3             | 2          | 400                      | 0                            | 0                          | 1                            | 1                          | 1633169159489000    | 6941468797545315876      |
+| partition | record_count | file_count | spec_id |
+| -- | -- | -- | -- |
+|  {20211001, 11}|           1|         1|         0|
+|  {20211002, 11}|           1|         1|         0|
+|  {20211001, 10}|           1|         1|         0|
+|  {20211002, 10}|           1|         1|         0|
 
 Note:
-1. For unpartitioned tables, the partitions table will not contain the partition and spec_id fields.
+1. For unpartitioned tables, the partitions table will contain only the record_count and file_count columns.
 
 2. The partitions metadata table shows partitions with data files or delete files in the current snapshot. However, delete files are not applied, and so in some cases partitions may be shown even though all their data rows are marked deleted by delete files.
 
@@ -339,9 +322,9 @@ Note:
 
 These tables are unions of the metadata tables specific to the current snapshot, and return metadata across all snapshots.
 
-{{< hint danger >}}
-The "all" metadata tables may produce more than one row per data file or manifest file because metadata files may be part of more than one table snapshot.
-{{< /hint >}}
+!!! danger
+    The "all" metadata tables may produce more than one row per data file or manifest file because metadata files may be part of more than one table snapshot.
+
 
 #### All Data Files
 
@@ -370,7 +353,7 @@ SELECT * FROM prod.db.table.all_manifests;
 | s3://.../metadata/a85f78c5-3222-4b37-b7e4-faf944425d48-m0.avro | 6376 | 0 | 6272782676904868561 | 2 | 0 | 0 |[{false, false, 20210101, 20210101}]|
 
 Note:
-1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../../spec#manifest-lists), with the following order:
+1. Fields within `partition_summaries` column of the manifests table correspond to `field_summary` structs within [manifest list](../../spec.md#manifest-lists), with the following order:
     - `contains_null`
     - `contains_nan`
     - `lower_bound`

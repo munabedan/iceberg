@@ -1,11 +1,7 @@
 ---
 title: "Nessie"
-url: nessie
-menu:
-    main:
-        parent: Integrations
-        identifier: nessie_integration
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -40,16 +36,16 @@ See [Project Nessie](https://projectnessie.org) for more information on Nessie. 
 
 The `iceberg-nessie` module is bundled with Spark and Flink runtimes for all versions from `0.11.0`. To get started
 with Nessie (with spark-3.3) and Iceberg simply add the Iceberg runtime to your process. Eg: `spark-sql --packages
-org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:{{% icebergVersion %}}`. 
+org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:{{ icebergVersion }}`. 
 
 ## Spark SQL Extensions
 
-Nessie SQL extensions can be used to manage the Nessie repo as shown below.
+From Spark 3.1 and above, Nessie SQL extensions can be used to manage the Nessie repo as shown below.
 Example for Spark 3.3 with scala 2.12:
 
 ```
 bin/spark-sql 
-  --packages "org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:{{% icebergVersion %}},org.projectnessie.nessie-integrations:nessie-spark-extensions-3.3_2.12:{{% nessieVersion %}}"
+  --packages "org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:{{ icebergVersion }},org.projectnessie.nessie-integrations:nessie-spark-extensions-3.3_2.12:{{ nessieVersion }}"
   --conf spark.sql.extensions="org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,org.projectnessie.spark.extensions.NessieSparkSessionExtensions"
   --conf <other settings>
 ```
@@ -57,9 +53,8 @@ Please refer [Nessie SQL extension document](https://projectnessie.org/tools/sql
 
 ## Nessie Catalog
 
-One major feature introduced in release `0.11.0` is the ability to easily interact with a [Custom
-Catalog](../custom-catalog) from Spark and Flink. See [Spark Configuration](../spark-configuration#catalog-configuration)
-  and [Flink Configuration](../flink#custom-catalog) for instructions for adding a custom catalog to Iceberg. 
+One major feature introduced in release `0.11.0` is the ability to easily interact with a [Custom Catalog](custom-catalog.md) from Spark and Flink. See [Spark Configuration](spark-configuration.md#catalog-configuration)
+  and [Flink Configuration](flink.md#custom-catalog) for instructions for adding a custom catalog to Iceberg. 
 
 To use the Nessie Catalog the following properties are required:
 
@@ -87,14 +82,14 @@ conf.set("spark.sql.catalog.nessie.catalog-impl", "org.apache.iceberg.nessie.Nes
 conf.set("spark.sql.catalog.nessie", "org.apache.iceberg.spark.SparkCatalog")
 conf.set("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,org.projectnessie.spark.extensions.NessieSparkSessionExtensions")
 ```
-This is how it looks in Flink via the Python API (additional details can be found [here](../flink#preparation-when-using-flinks-python-api)):
+This is how it looks in Flink via the Python API (additional details can be found [here](flink.md#preparation-when-using-flinks-python-api)):
 ```python
 import os
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.table import StreamTableEnvironment
 
 env = StreamExecutionEnvironment.get_execution_environment()
-iceberg_flink_runtime_jar = os.path.join(os.getcwd(), "iceberg-flink-runtime-{{% icebergVersion %}}.jar")
+iceberg_flink_runtime_jar = os.path.join(os.getcwd(), "iceberg-flink-runtime-{{ icebergVersion }}.jar")
 env.add_jars("file://{}".format(iceberg_flink_runtime_jar))
 table_env = StreamTableEnvironment.create(env)
 
@@ -110,9 +105,8 @@ There is nothing special above about the `nessie` name. A spark catalog can have
 settings for the `catalog-impl` and the required config to start Nessie correctly.
 Once you have a Nessie catalog you have access to your entire Nessie repo. You can then perform create/delete/merge
 operations on branches and perform commits on branches. Each Iceberg table in a Nessie Catalog is identified by an
-arbitrary length namespace and table name (eg `data.base.name.table`). These namespaces must be explicitly created 
-as mentioned [here](https://projectnessie.org/blog/namespace-enforcement/).
-Any transaction on a Nessie enabled Iceberg table is a single commit in Nessie. Nessie commits
+arbitrary length namespace and table name (eg `data.base.name.table`). These namespaces are implicit and don't need to
+be created separately. Any transaction on a Nessie enabled Iceberg table is a single commit in Nessie. Nessie commits
 can encompass an arbitrary number of actions on an arbitrary number of tables, however in Iceberg this will be limited
 to the set of single table transactions currently available.
 
@@ -152,11 +146,11 @@ incorrect or not performant the branch can be dropped without being merged.
 Please see the [Nessie Documentation](https://projectnessie.org/features/) for further descriptions of 
 Nessie features.
 
-{{< hint danger >}}
-Regular table maintenance in Iceberg is complicated when using nessie. Please consult
-[Management Services](https://projectnessie.org/features/management/) before performing any 
-[table maintenance](../maintenance).
-{{< /hint >}}
+!!! danger
+    Regular table maintenance in Iceberg is complicated when using nessie. Please consult
+    [Management Services](https://projectnessie.org/features/management/) before performing any 
+    [table maintenance](maintenance.md).
+
 
 ## Example 
 

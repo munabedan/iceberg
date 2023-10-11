@@ -1,13 +1,7 @@
 ---
 title: "Procedures"
-url: spark-procedures
-aliases:
-    - "spark/spark-procedures"
-menu:
-    main:
-        parent: Spark
-        identifier: spark_procedures
-        weight: 0
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,7 +22,7 @@ menu:
 
 # Spark Procedures
 
-To use Iceberg in Spark, first configure [Spark catalogs](../spark-configuration). Stored procedures are only available when using [Iceberg SQL extensions](../spark-configuration#sql-extensions) in Spark 3.
+To use Iceberg in Spark, first configure [Spark catalogs](spark-configuration.md). Stored procedures are only available when using [Iceberg SQL extensions](spark-configuration.md#sql-extensions) in Spark 3.
 
 ## Usage
 
@@ -60,9 +54,9 @@ Roll back a table to a specific snapshot ID.
 
 To roll back to a specific time, use [`rollback_to_timestamp`](#rollback_to_timestamp).
 
-{{< hint info >}}
-This procedure invalidates all cached Spark plans that reference the affected table.
-{{< /hint >}}
+!!! info
+    This procedure invalidates all cached Spark plans that reference the affected table.
+
 
 #### Usage
 
@@ -90,9 +84,9 @@ CALL catalog_name.system.rollback_to_snapshot('db.sample', 1)
 
 Roll back a table to the snapshot that was current at some time.
 
-{{< hint info >}}
-This procedure invalidates all cached Spark plans that reference the affected table.
-{{< /hint >}}
+!!! info
+    This procedure invalidates all cached Spark plans that reference the affected table.
+
 
 #### Usage
 
@@ -121,19 +115,16 @@ Sets the current snapshot ID for a table.
 
 Unlike rollback, the snapshot is not required to be an ancestor of the current table state.
 
-{{< hint info >}}
-This procedure invalidates all cached Spark plans that reference the affected table.
-{{< /hint >}}
+!!! info
+    This procedure invalidates all cached Spark plans that reference the affected table.
+
 
 #### Usage
 
 | Argument Name | Required? | Type | Description |
 |---------------|-----------|------|-------------|
 | `table`       | ✔️  | string | Name of the table to update |
-| `snapshot_id` | | long   | Snapshot ID to set as current |
-| `ref` | | string | Snapshot Referece (branch or tag) to set as current |
-
-Either `snapshot_id` or `ref` must be provided but not both.
+| `snapshot_id` | ✔️  | long   | Snapshot ID to set as current |
 
 #### Output
 
@@ -149,11 +140,6 @@ Set the current snapshot for `db.sample` to 1:
 CALL catalog_name.system.set_current_snapshot('db.sample', 1)
 ```
 
-Set the current snapshot for `db.sample` to tag `s1`:
-```sql
-CALL catalog_name.system.set_current_snapshot(table => 'db.sample', tag => 's1');
-```
-
 ### `cherrypick_snapshot`
 
 Cherry-picks changes from a snapshot into the current table state.
@@ -162,9 +148,9 @@ Cherry-picking creates a new snapshot from an existing snapshot without altering
 
 Only append and dynamic overwrite snapshots can be cherry-picked.
 
-{{< hint info >}}
-This procedure invalidates all cached Spark plans that reference the affected table.
-{{< /hint >}}
+!!! info
+    This procedure invalidates all cached Spark plans that reference the affected table.
+
 
 #### Usage
 
@@ -192,76 +178,10 @@ Cherry-pick snapshot 1 with named args
 CALL catalog_name.system.cherrypick_snapshot(snapshot_id => 1, table => 'my_table' )
 ```
 
-### `publish_changes`
-
-Publish changes from a staged WAP ID into the current table state.
-
-publish_changes creates a new snapshot from an existing snapshot without altering or removing the original.
-
-Only append and dynamic overwrite snapshots can be successfully published.
-
-{{< hint info >}}
-This procedure invalidates all cached Spark plans that reference the affected table.
-{{< /hint >}}
-
-#### Usage
-
-| Argument Name | Required? | Type | Description |
-|---------------|-----------|------|-------------|
-| `table`       | ✔️  | string | Name of the table to update |
-| `wap_id`      | ✔️  | long | The wap_id to be pusblished from stage to prod |
-
-#### Output
-
-| Output Name | Type | Description |
-| ------------|------|-------------|
-| `source_snapshot_id` | long | The table's current snapshot before publishing the change |
-| `current_snapshot_id` | long | The snapshot ID created by applying the change |
-
-#### Examples
-
-publish_changes with WAP ID 'wap_id_1'
-```sql
-CALL catalog_name.system.publish_changes('my_table', 'wap_id_1')
-```
-
-publish_changes with named args
-```sql
-CALL catalog_name.system.publish_changes(wap_id => 'wap_id_2', table => 'my_table')
-```
-
-### `fast_forward`
-
-Fast-forward the current snapshot of one branch to the latest snapshot of another.
-
-#### Usage
-
-| Argument Name | Required? | Type | Description |
-|---------------|-----------|------|-------------|
-| `table` | ✔️ | string | Name of the table to update |
-| `branch` | ✔️ | string   | Name of the branch to fast-forward |
-| `to` | ✔️ | string | | Name of the branch to be fast-forwarded to |
-
-#### Output
-
-| Output Name | Type | Description |
-| ------------|------|-------------|
-| `branch_updated` | string | Name of the branch that has been fast-forwarded |
-| `previous_ref` | long | The snapshot ID before applying fast-forward |
-| `updated_ref`  | long | The current snapshot ID after applying fast-forward |
-
-#### Examples
-
-Fast-forward the main branch to the head of `audit-branch`
-```sql
-CALL catalog_name.system.fast_forward('my_table', 'main', 'audit-branch')
-```
-
-
 
 ## Metadata management
 
-Many [maintenance actions](../maintenance) can be performed using Iceberg stored procedures.
+Many [maintenance actions](maintenance.md) can be performed using Iceberg stored procedures.
 
 ### `expire_snapshots`
 
@@ -283,8 +203,7 @@ the `expire_snapshots` procedure will never remove files which are still require
 | `stream_results` |    | boolean       | When true, deletion files will be sent to Spark driver by RDD partition (by default, all the files will be sent to Spark driver). This option is recommended to set to `true` to prevent Spark driver OOM from large file size |
 | `snapshot_ids` |   | array of long       | Array of snapshot IDs to expire. |
 
-If `older_than` and `retain_last` are omitted, the table's [expiration properties](../configuration/#table-behavior-properties) will be used.
-Snapshots that are still referenced by branches or tags won't be removed. By default, branches and tags never expire, but their retention policy can be changed with the table property `history.expire.max-ref-age-ms`. The `main` branch never expires.
+If `older_than` and `retain_last` are omitted, the table's [expiration properties](configuration.md#table-behavior-properties) will be used.
 
 #### Output
 
@@ -358,38 +277,11 @@ Iceberg can compact data files in parallel using Spark with the `rewriteDataFile
 | `options`     | ️   | map<string, string> | Options to be used for actions|
 | `where`       | ️   | string | predicate as a string used for filtering the files. Note that all files that may contain data matching the filter will be selected for rewriting|
 
-#### Options
 
-##### General Options
-| Name | Default Value | Description |
-|------|---------------|-------------|
-| `max-concurrent-file-group-rewrites` | 5 | Maximum number of file groups to be simultaneously rewritten |
-| `partial-progress.enabled` | false | Enable committing groups of files prior to the entire rewrite completing |
-| `partial-progress.max-commits` | 10 | Maximum amount of commits that this rewrite is allowed to produce if partial progress is enabled |
-| `use-starting-sequence-number` | true | Use the sequence number of the snapshot at compaction start time instead of that of the newly produced snapshot |
-| `rewrite-job-order` | none | Force the rewrite job order based on the value. <ul><li>If rewrite-job-order=bytes-asc, then rewrite the smallest job groups first.</li><li>If rewrite-job-order=bytes-desc, then rewrite the largest job groups first.</li><li>If rewrite-job-order=files-asc, then rewrite the job groups with the least files first.</li><li>If rewrite-job-order=files-desc, then rewrite the job groups with the most files first.</li><li>If rewrite-job-order=none, then rewrite job groups in the order they were planned (no specific ordering).</li></ul> |
-| `target-file-size-bytes` | 536870912 (512 MB, default value of `write.target-file-size-bytes` from [table properties](../configuration/#write-properties)) | Target output file size |
-| `min-file-size-bytes` | 75% of target file size | Files under this threshold will be considered for rewriting regardless of any other criteria |
-| `max-file-size-bytes` | 180% of target file size | Files with sizes above this threshold will be considered for rewriting regardless of any other criteria |
-| `min-input-files` | 5 | Any file group exceeding this number of files will be rewritten regardless of other criteria |
-| `rewrite-all` | false | Force rewriting of all provided files overriding other options |
-| `max-file-group-size-bytes` | 107374182400 (100GB) | Largest amount of data that should be rewritten in a single file group. The entire rewrite operation is broken down into pieces based on partitioning and within partitions based on size into file-groups.  This helps with breaking down the rewriting of very large partitions which may not be rewritable otherwise due to the resource constraints of the cluster. |
-| `delete-file-threshold` | 2147483647 | Minimum number of deletes that needs to be associated with a data file for it to be considered for rewriting |
-
-
-##### Options for sort strategy
-
-| Name | Default Value | Description |
-|------|---------------|-------------|
-| `compression-factor` | 1.0 | The number of shuffle partitions and consequently the number of output files created by the Spark sort is based on the size of the input data files used in this file rewriter. Due to compression, the disk file sizes may not accurately represent the size of files in the output. This parameter lets the user adjust the file size used for estimating actual output data size. A factor greater than 1.0 would generate more files than we would expect based on the on-disk file size. A value less than 1.0 would create fewer files than we would expect based on the on-disk size. |
-| `shuffle-partitions-per-file` | 1 | Number of shuffle partitions to use for each output file. Iceberg will use a custom coalesce operation to stitch these sorted partitions back together into a single sorted file. |
-
-##### Options for sort strategy with zorder sort_order
-
-| Name | Default Value | Description |
-|------|---------------|-------------|
-| `var-length-contribution` | 8 | Number of bytes considered from an input column of a type with variable length (String, Binary) |
-| `max-output-size` | 2147483647 | Amount of bytes interleaved in the ZOrder algorithm |
+See the [`RewriteDataFiles` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/RewriteDataFiles.html#field.summary),
+<br/>  [`BinPackStrategy` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/BinPackStrategy.html#field.summary)
+and <br/> [`SortStrategy` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/SortStrategy.html#field.summary)
+for list of all the supported options for this action.
 
 #### Output
 
@@ -397,8 +289,6 @@ Iceberg can compact data files in parallel using Spark with the `rewriteDataFile
 | ------------|------|-------------|
 | `rewritten_data_files_count` | int | Number of data which were re-written by this command |
 | `added_data_files_count`     | int | Number of new data files which were written by this command |
-| `rewritten_bytes_count`      | long | Number of bytes which were written by this command |
-| `failed_data_files_count`    | int | Number of data files that failed to be rewritten when `partial-progress.enabled` is true |
 
 #### Examples
 
@@ -436,9 +326,12 @@ Rewrite manifests for a table to optimize scan planning.
 
 Data files in manifests are sorted by fields in the partition spec. This procedure runs in parallel using a Spark job.
 
-{{< hint info >}}
-This procedure invalidates all cached Spark plans that reference the affected table.
-{{< /hint >}}
+See the [`RewriteManifests` Javadoc](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/actions/RewriteManifests.html)
+to see more configuration options.
+
+!!! info
+    This procedure invalidates all cached Spark plans that reference the affected table.
+
 
 #### Usage
 
@@ -466,63 +359,6 @@ Rewrite the manifests in table `db.sample` and disable the use of Spark caching.
 CALL catalog_name.system.rewrite_manifests('db.sample', false)
 ```
 
-### `rewrite_position_delete_files`
-
-Iceberg can rewrite position delete files, which serves two purposes:
-* Minor Compaction: Compact small position delete files into larger ones.  This reduces the size of metadata stored in manifest files and overhead of opening small delete files.
-* Remove Dangling Deletes: Filter out position delete records that refer to data files that are no longer live.  After rewrite_data_files, position delete records pointing to the rewritten data files are not always marked for removal, and can remain tracked by the table's live snapshot metadata.  This is known as the 'dangling delete' problem.
-
-#### Usage
-
-| Argument Name | Required? | Type | Description                      |
-|---------------|-----------|------|----------------------------------|
-| `table`       | ✔️  | string | Name of the table to update      |
-| `options`     | ️   | map<string, string> | Options to be used for procedure |
-
-Dangling deletes are always filtered out during rewriting.
-
-#### Options
-
-| Name | Default Value | Description |
-|------|---------------|-------------|
-| `max-concurrent-file-group-rewrites` | 5 | Maximum number of file groups to be simultaneously rewritten |
-| `partial-progress.enabled` | false | Enable committing groups of files prior to the entire rewrite completing |
-| `partial-progress.max-commits` | 10 | Maximum amount of commits that this rewrite is allowed to produce if partial progress is enabled |
-| `rewrite-job-order` | none | Force the rewrite job order based on the value. <ul><li>If rewrite-job-order=bytes-asc, then rewrite the smallest job groups first.</li><li>If rewrite-job-order=bytes-desc, then rewrite the largest job groups first.</li><li>If rewrite-job-order=files-asc, then rewrite the job groups with the least files first.</li><li>If rewrite-job-order=files-desc, then rewrite the job groups with the most files first.</li><li>If rewrite-job-order=none, then rewrite job groups in the order they were planned (no specific ordering).</li></ul> |
-| `target-file-size-bytes` | 67108864 (64MB, default value of `write.delete.target-file-size-bytes` from [table properties](../configuration/#write-properties)) | Target output file size |
-| `min-file-size-bytes` | 75% of target file size | Files under this threshold will be considered for rewriting regardless of any other criteria |
-| `max-file-size-bytes` | 180% of target file size | Files with sizes above this threshold will be considered for rewriting regardless of any other criteria |
-| `min-input-files` | 5 | Any file group exceeding this number of files will be rewritten regardless of other criteria |
-| `rewrite-all` | false | Force rewriting of all provided files overriding other options |
-| `max-file-group-size-bytes` | 107374182400 (100GB) | Largest amount of data that should be rewritten in a single file group. The entire rewrite operation is broken down into pieces based on partitioning and within partitions based on size into file-groups.  This helps with breaking down the rewriting of very large partitions which may not be rewritable otherwise due to the resource constraints of the cluster. |
-
-#### Output
-
-| Output Name                    | Type | Description                                                                |
-|--------------------------------|------|----------------------------------------------------------------------------|
-| `rewritten_delete_files_count` | int  | Number of delete files which were removed by this command                  |
-| `added_delete_files_count`     | int  | Number of delete files which were added by this command                    |
-| `rewritten_bytes_count`        | long | Count of bytes across delete files which were removed by this command      |
-| `added_bytes_count`            | long | Count of bytes across all new delete files which were added by this command |
-
-
-#### Examples
-
-Rewrite position delete files in table `db.sample`.  This selects position delete files that fit default rewrite criteria, and writes new files of target size `target-file-size-bytes`.  Dangling deletes are removed from rewritten delete files.
-```sql
-CALL catalog_name.system.rewrite_position_delete_files('db.sample')
-```
-
-Rewrite all position delete files in table `db.sample`, writing new files `target-file-size-bytes`.   Dangling deletes are removed from rewritten delete files.
-```sql
-CALL catalog_name.system.rewrite_position_delete_files(table => 'db.sample', options => map('rewrite-all', 'true'))
-```
-
-Rewrite position delete files in table `db.sample`.  This selects position delete files in partitions where 2 or more position delete files need to be rewritten based on size criteria.  Dangling deletes are removed from rewritten delete files.
-```sql
-CALL catalog_name.system.rewrite_position_delete_files(table => 'db.sample', options => map('min-input-files','2'))
-```
-
 ## Table migration
 
 The `snapshot` and `migrate` procedures help test and migrate existing Hive or Spark tables to Iceberg.
@@ -537,13 +373,13 @@ When inserts or overwrites run on the snapshot, new files are placed in the snap
 
 When finished testing a snapshot table, clean it up by running `DROP TABLE`.
 
-{{< hint info >}}
-Because tables created by `snapshot` are not the sole owners of their data files, they are prohibited from
-actions like `expire_snapshots` which would physically delete data files. Iceberg deletes, which only effect metadata,
-are still allowed. In addition, any operations which affect the original data files will disrupt the Snapshot's 
-integrity. DELETE statements executed against the original Hive table will remove original data files and the
-`snapshot` table will no longer be able to access them.
-{{< /hint >}}
+!!! info
+    Because tables created by `snapshot` are not the sole owners of their data files, they are prohibited from
+    actions like `expire_snapshots` which would physically delete data files. Iceberg deletes, which only effect metadata,
+    are still allowed. In addition, any operations which affect the original data files will disrupt the Snapshot's 
+    integrity. DELETE statements executed against the original Hive table will remove original data files and the
+    `snapshot` table will no longer be able to access them.
+
 
 See [`migrate`](#migrate) to replace an existing table with an Iceberg table.
 
@@ -596,7 +432,6 @@ By default, the original table is retained with the name `table_BACKUP_`.
 | `table`       | ✔️  | string | Name of the table to migrate |
 | `properties`  | ️   | map<string, string> | Properties for the new Iceberg table |
 | `drop_backup` |   | boolean | When true, the original table will not be retained as backup (defaults to false) |
-| `backup_table_name` |  | string | Name of the table that will be retained as backup (defaults to `table_BACKUP_`) |
 
 #### Output
 
@@ -627,10 +462,6 @@ will then treat these files as if they are part of the set of files  owned by Ic
 `expire_snapshot` calls will be able to physically delete the added files. This method should not be used if 
 `migrate` or `snapshot` are possible.
 
-{{< hint warning >}}
-Keep in mind the `add_files` procedure will fetch the Parquet metadata from each file being added just once. If you're using tiered storage, (such as [Amazon S3 Intelligent-Tiering storage class](https://aws.amazon.com/s3/storage-classes/intelligent-tiering/)), the underlying, file will be retrieved from the archive, and will remain on a higher tier for a set period of time.
-{{< /hint >}}
-
 #### Usage
 
 | Argument Name           | Required? | Type                | Description                                                                                         |
@@ -651,9 +482,9 @@ Warning : Files added by this method can be physically deleted by Iceberg operat
 | `added_files_count`       | long | The number of files added by this command         |
 | `changed_partition_count` | long | The number of partitioned changed by this command |
 
-{{< hint warning >}}
-changed_partition_count will be 0 when table property `compatibility.snapshot-id-inheritance.enabled` is set to true
-{{< /hint >}}
+!!! warning
+    changed_partition_count will be 0 when table property `compatibility.snapshot-id-inheritance.enabled` is set to true
+
 #### Examples
 
 Add the files from table `db.src_table`, a Hive or Spark table registered in the session Catalog, to Iceberg table
@@ -686,10 +517,10 @@ Creates a catalog entry for a metadata.json file which already exists but does n
 | `table`       | ✔️  | string | Table which is to be registered |
 | `metadata_file`| ✔️  | string | Metadata file which is to be registered as a new catalog identifier |
 
-{{< hint warning >}}
-Having the same metadata.json registered in more than one catalog can lead to missing updates, loss of data, and table corruption.
-Only use this procedure when the table is no longer registered in an existing catalog, or you are moving a table between catalogs.
-{{< /hint >}}
+!!! warning
+    Having the same metadata.json registered in more than one catalog can lead to missing updates, loss of data, and table corruption.
+    Only use this procedure when the table is no longer registered in an existing catalog, or you are moving a table between catalogs.
+
 
 #### Output
 
@@ -760,15 +591,14 @@ Creates a view that contains the changes from a given table.
 
 #### Usage
 
-| Argument Name        | Required? | Type                | Description                                                                                                                                                                                          |
-|----------------------|-----------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `table`              | ✔️         | string              | Name of the source table for the changelog                                                                                                                                                           |
-| `changelog_view`     |           | string              | Name of the view to create                                                                                                                                                                           |
-| `options`            |           | map<string, string> | A map of Spark read options to use                                                                                                                                                                   |
-| `net_changes`        |           | boolean             | Whether to output net changes (see below for more information). Defaults to false.                                                                                                                   |
-| `compute_updates`    |           | boolean             | Whether to compute pre/post update images (see below for more information). Defaults to false.                                                                                                       | 
-| `identifier_columns` |           | array<string>       | The list of identifier columns to compute updates. If the argument `compute_updates` is set to true and `identifier_columns` are not provided, the table’s current identifier fields will be used.   |
-| `remove_carryovers`  |           | boolean             | Whether to remove carry-over rows (see below for more information). Defaults to true. Deprecated since 1.4.0, will be removed in 1.5.0;  Please query `SparkChangelogTable` to view carry-over rows. |
+| Argument Name | Required? | Type | Description                                                                                                                                                                                                           |
+|---------------|----------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `table`       | ✔️ | string | Name of the source table for the changelog                                                                                                                                                                            |
+| `changelog_view`        |   | string | Name of the view to create                                                                                                                                                                                            |
+| `options`     |   | map<string, string> | A map of Spark read options to use                                                                                                                                                                                    |
+|`compute_updates`| | boolean | Whether to compute pre/post update images (see below for more information). Defaults to false.                                                                                                                        | 
+|`identifier_columns`| | array<string> | The list of identifier columns to compute updates. If the argument `compute_updates` is set to true and `identifier_columns` are not provided, the table’s current identifier fields will be used to compute updates. |
+|`remove_carryovers`| | boolean | Whether to remove carry-over rows (see below for more information). Defaults to true.                                                                                                                                 |
 
 Here is a list of commonly used Spark read options:
 * `start-snapshot-id`: the exclusive start snapshot ID. If not provided, it reads from the table’s first snapshot inclusively. 
@@ -831,22 +661,6 @@ second snapshot deleted 1 record.
 |2	| Bob	   |INSERT	|0	|5390529835796506035|
 |1	| Alice  |DELETE	|1	|8764748981452218370|
 
-Create a changelog view that computes net changes. It removes intermediate changes and only outputs the net changes. 
-```sql
-CALL spark_catalog.system.create_changelog_view(
-  table => 'db.tbl',
-  options => map('end-snapshot-id', '87647489814522183702'),
-  net_changes => true
-)
-```
-
-With the net changes, the above changelog view only contains the following row since Alice was inserted in the first snapshot and deleted in the second snapshot.
-
-|  id	| name	  |_change_type |	_change_ordinal	| _change_snapshot_id |
-|---|--------|---|---|---|
-|2	| Bob	   |INSERT	|0	|5390529835796506035|
-
-
 #### Carry-over Rows
 
 The procedure removes the carry-over rows by default. Carry-over rows are the result of row-level operations(`MERGE`, `UPDATE` and `DELETE`)
@@ -859,10 +673,8 @@ reports this as the following pair of rows, despite it not being an actual chang
 | 1   | Alice | DELETE       |
 | 1   | Alice | INSERT       |
 
-To see carry-over rows, query `SparkChangelogTable` as follows:
-```sql
-SELECT * FROM spark_catalog.db.tbl.changes
-```
+By default, this view finds the carry-over rows and removes them from the result. User can disable this
+behavior by setting the `remove_carryovers` option to `false`.
 
 #### Pre/Post Update Images
 

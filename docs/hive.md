@@ -1,8 +1,7 @@
 ---
 title: "Hive"
-url: hive
-weight: 400
-menu: main
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -27,7 +26,6 @@ Iceberg supports reading and writing Iceberg tables through [Hive](https://hive.
 a [StorageHandler](https://cwiki.apache.org/confluence/display/Hive/StorageHandlers).
 
 ## Feature support
-
 Iceberg compatibility with Hive 2.x and Hive 3.1.2/3 supports the following features:
 
 * Creating a table
@@ -35,20 +33,22 @@ Iceberg compatibility with Hive 2.x and Hive 3.1.2/3 supports the following feat
 * Reading a table
 * Inserting into a table (INSERT INTO)
 
-{{< hint warning >}}
-DML operations work only with MapReduce execution engine.
-{{< /hint >}}
+!!! warning
+    DML operations work only with MapReduce execution engine.
 
-With Hive version 4.0.0-alpha-2 and above, Iceberg integration when using HiveCatalog supports the following additional features:
+
+With Hive version 4.0.0-alpha-2 and above,
+the Iceberg integration when using HiveCatalog supports the following additional features:
 
 * Altering a table with expiring snapshots.
 * Create a table like an existing table (CTLT table)
 * Support adding parquet compression type via Table properties [Compression types](https://spark.apache.org/docs/2.4.3/sql-data-sources-parquet.html#configuration)
 * Altering a table metadata location
 * Supporting table rollback
-* Honours sort orders on existing tables when writing a table [Sort orders specification](https://iceberg.apache.org/spec/#sort-orders)
+* Honors sort orders on existing tables when writing a table [Sort orders specification](../../spec.md#sort-orders)
 
-With Hive version 4.0.0-alpha-1 and above, Iceberg integration when using HiveCatalog supports the following additional features:
+With Hive version 4.0.0-alpha-1 and above,
+the Iceberg integration when using HiveCatalog supports the following additional features:
 
 * Creating an Iceberg identity-partitioned table
 * Creating an Iceberg table with any partition spec, including the various transforms supported by Iceberg
@@ -64,25 +64,15 @@ With Hive version 4.0.0-alpha-1 and above, Iceberg integration when using HiveCa
 * Inserting into a table (INSERT INTO)
 * Inserting data overwriting existing data (INSERT OVERWRITE)
 
-{{< hint warning >}}
-DML operations work only with Tez execution engine.
-{{< /hint >}}
+!!! warning
+    DML operations work only with Tez execution engine.
+
 
 ## Enabling Iceberg support in Hive
 
-Hive 4 comes with `hive-iceberg` that ships Iceberg, so no additional downloads or jars are needed. For older versions of Hive a runtime jar has to be added.
-
-### Hive 4.0.0-beta-1
-
-Hive 4.0.0-beta-1 comes with the Iceberg 1.3.0 included.
-
-### Hive 4.0.0-alpha-2
-
-Hive 4.0.0-alpha-2 comes with the Iceberg 0.14.1 included.
-
 ### Hive 4.0.0-alpha-1
 
-Hive 4.0.0-alpha-1 comes with the Iceberg 0.13.1 included.
+Hive 4.0.0-alpha-1 comes with the Iceberg 0.13.1 included. No additional downloads or jars are needed.
 
 ### Hive 2.3.x, Hive 3.1.x
 
@@ -115,9 +105,10 @@ To enable Hive support globally for an application, set `iceberg.engine.hive.ena
 For example, setting this in the `hive-site.xml` loaded by Spark will enable the storage handler for all tables created
 by Spark.
 
-{{< hint danger >}} Starting with Apache Iceberg `0.11.0`, when using Hive with Tez you also have to disable
-vectorization (`hive.vectorized.execution.enabled=false`). {{< /hint >}}
+!!! danger
+    Starting with Apache Iceberg 0.11.0, when using Hive with Tez you also have to disable vectorization (hive.vectorized.execution.enabled=false).
 
+    
 ##### Table property configuration
 
 Alternatively, the property `engine.hive.enabled` can be set to `true` and added to the table properties when creating
@@ -161,7 +152,7 @@ on the table's `iceberg.catalog` property:
    to `location_based_table`
 
 For cases 2 and 3 above, users can create an overlay of an Iceberg table in the Hive metastore, so that different table
-types can work together in the same Hive environment. See [CREATE EXTERNAL TABLE](#create-external-table)
+types can work together in the same Hive environment. See [CREATE EXTERNAL TABLE](#create-external-table-overlaying-an-existing-iceberg-table)
 and [CREATE TABLE](#create-table) for more details.
 
 ### Custom Iceberg catalogs
@@ -238,10 +229,10 @@ You can create Iceberg partitioned tables using a command familiar to those who 
 ```sql
 CREATE TABLE x (i int) PARTITIONED BY (j int) STORED BY ICEBERG;
 ```
+    
+!!! info
+    The resulting table does not create partitions in HMS, but instead, converts partition data into Iceberg identity partitions.
 
-{{< hint info >}}
-The resulting table does not create partitions in HMS, but instead, converts partition data into Iceberg identity partitions.
-{{< /hint >}}
 
 Use the DESCRIBE command to get information about the Iceberg identity partitions:
 
@@ -288,9 +279,9 @@ The supported transformations for Hive are the same as for Spark:
      - Strings are truncated to the given length
      - Integers and longs truncate to bins: truncate(10, i) produces partitions 0, 10, 20, 30,
 
-{{< hint info >}}
-The resulting table does not create partitions in HMS, but instead, converts partition data into Iceberg partitions.
-{{< /hint >}}
+!!! info
+    The resulting table does not create partitions in HMS, but instead, converts partition data into Iceberg partitions.
+
 
 ### CREATE TABLE AS SELECT
 
@@ -312,10 +303,7 @@ CREATE TABLE target LIKE source STORED BY ICEBERG;
 ### CREATE EXTERNAL TABLE overlaying an existing Iceberg table
 
 The `CREATE EXTERNAL TABLE` command is used to overlay a Hive table "on top of" an existing Iceberg table. Iceberg
-tables are created using either a [`Catalog`](../../../javadoc/{{% icebergVersion
-%}}/index.html?org/apache/iceberg/catalog/Catalog.html), or an implementation of the [`Tables`](../../../javadoc/{{%
-icebergVersion %}}/index.html?org/apache/iceberg/Tables.html) interface, and Hive needs to be configured accordingly to
-operate on these different types of table.
+tables are created using either a [`Catalog`](../../javadoc/{{ icebergVersion }}/index.html?org/apache/iceberg/catalog/Catalog.html), or an implementation of the [`Tables`](../../javadoc/{{ icebergVersion }}/index.html?org/apache/iceberg/Tables.html) interface, and Hive needs to be configured accordingly to operate on these different types of table.
 
 #### Hive catalog tables
 
@@ -377,18 +365,19 @@ CREATE TABLE database_a.table_a
 TBLPROPERTIES ('iceberg.catalog'='hadoop_cat');
 ```
 
-{{< hint danger >}} If the table to create already exists in the custom catalog, this will create a managed overlay
-table. This means technically you can omit the `EXTERNAL` keyword when creating an overlay table. However, this is **not
-recommended** because creating managed overlay tables could pose a risk to the shared data files in case of accidental
-drop table commands from the Hive side, which would unintentionally remove all the data in the table. {{< /hint >}}
+!!! danger
+    table. This means technically you can omit the `EXTERNAL` keyword when creating an overlay table. However, this is **not
+    recommended** because creating managed overlay tables could pose a risk to the shared data files in case of accidental
+    drop table commands from the Hive side, which would unintentionally remove all the data in the table.
 
+    
 ### ALTER TABLE
 #### Table properties
 For HiveCatalog tables the Iceberg table properties and the Hive table properties stored in HMS are kept in sync.
+    
+!!! info
+    IMPORTANT: This feature is not available for other Catalog implementations.
 
-{{< hint info >}}
-IMPORTANT: This feature is not available for other Catalog implementations.
-{{< /hint >}}
 ```sql
 ALTER TABLE t SET TBLPROPERTIES('...'='...');
 ```
@@ -417,10 +406,10 @@ ALTER TABLE orders CHANGE COLUMN price price long;
 ```sql
 ALTER TABLE orders REPLACE COLUMNS (remaining string);
 ```
-{{< hint info >}}
-Note, that dropping columns is only thing REPLACE COLUMNS can be used for
-i.e. if columns are specified out-of-order an error will be thrown signalling this limitation.
-{{< /hint >}}
+!!! info
+    Note, that dropping columns is only thing REPLACE COLUMNS can be used for
+    i.e. if columns are specified out-of-order an error will be thrown signalling this limitation.
+
 
 #### Partition evolution
 You change the partitioning schema using the following commands:

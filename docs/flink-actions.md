@@ -1,13 +1,7 @@
 ---
 title: "Flink Actions"
-url: flink-actions
-aliases:
-    - "flink/flink-actions"
-menu:
-    main:
-        parent: Flink
-        identifier: flink_actions
-        weight: 500
+search:
+  exclude: true
 ---
 <!--
  - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,7 +22,7 @@ menu:
 
 ## Rewrite files action.
 
-Iceberg provides API to rewrite small files into large files by submitting Flink batch jobs. The behavior of this Flink action is the same as Spark's [rewriteDataFiles](../maintenance/#compact-data-files).
+Iceberg provides API to rewrite small files into large files by submitting Flink batch jobs. The behavior of this Flink action is the same as Spark's [rewriteDataFiles](maintenance.md#compact-data-files).
 
 ```java
 import org.apache.iceberg.flink.actions.Actions;
@@ -40,4 +34,4 @@ RewriteDataFilesActionResult result = Actions.forTable(table)
         .execute();
 ```
 
-For more details of the rewrite files action, please refer to [RewriteDataFilesAction](../../../javadoc/{{% icebergVersion %}}/org/apache/iceberg/flink/actions/RewriteDataFilesAction.html)
+For more details of the rewrite files action, please refer to [RewriteDataFilesAction](../../javadoc/{{ icebergVersion }}/org/apache/iceberg/flink/actions/RewriteDataFilesAction.html)
