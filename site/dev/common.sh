@@ -20,226 +20,105 @@ set -e
 
 REMOTE="iceberg_docs"
 
-
-
-# Function: create_or_update_docs_remote
-# Purpose: Ensures the presence of a specified remote repository for documentation.
-#          If the remote doesn't exist, it adds it using the provided URL.
-#          Then, it fetches updates from the remote repository.
 create_or_update_docs_remote () {
-  echo " --> create or update docs remote"
-  
-  # Check if the remote exists before attempting to add it
+  # check if remote exists before adding it
   git config "remote.${REMOTE}.url" >/dev/null || 
     git remote add "${REMOTE}" https://github.com/apache/iceberg.git
 
-  # Fetch updates from the remote repository
   git fetch "${REMOTE}"
 }
 
-
-# Function: pull_remote
-# Purpose: Pulls updates from a specified branch of a remote repository.
-# Arguments:
-#   $1: Branch name to pull updates from
 pull_remote () {
-  echo " --> pull remote"
-
   local BRANCH="$1"
+  assert_not_empty "${BRANCH}"
 
-  # Ensure the branch argument is not empty
-  assert_not_empty "${BRANCH}"  
-
-  # Perform a pull from the specified branch of the remote repository
-  git pull "${REMOTE}" "${BRANCH}"  
+  git pull "${REMOTE}" "${BRANCH}" 
 }
 
-# Function: push_remote
-# Purpose: Pushes changes from a local branch to a specified branch of a remote repository.
-# Arguments:
-#   $1: Branch name to push changes to
 push_remote () {
-  echo " --> push remote"
-
   local BRANCH="$1"
+  assert_not_empty "${BRANCH}"
 
-  # Ensure the branch argument is not empty
-  assert_not_empty "${BRANCH}"  
-
-  # Push changes to the specified branch of the remote repository
-  git push "${REMOTE}" "${BRANCH}"  
+  git push "${REMOTE}" "${BRANCH}" 
 }
 
-# Function: install_deps
-# Purpose: Installs or upgrades dependencies specified in the 'requirements.txt' file using pip.
 install_deps () {
-  echo " --> install deps"
-
-  # Use pip to install or upgrade dependencies from the 'requirements.txt' file quietly
   pip -q install -r requirements.txt --upgrade
 }
 
-# Function: assert_not_empty
-# Purpose: Checks if a provided argument is not empty. If empty, displays an error message and exits with a status code 1.
-# Arguments:
-#   $1: Argument to check for emptiness
 assert_not_empty () {
-  
-  if [ -z "$1" ]; then
-    echo "No argument supplied"
-
-    # Exit with an error code if no argument is provided
-    exit 1  
-  fi
+  if [ -z "$1" ]
+    then
+      echo "No argument supplied"
+      exit 1
+  fi 
 }
 
-# Function: get_latest_version
-# Purpose: Finds and retrieves the latest version of the documentation based on the directory structure.
-#          Assumes the documentation versions are numeric folders within 'docs/docs/'.
 get_latest_version () {
-  # Find the latest numeric folder within 'docs/docs/' structure
-  local latest=$(ls -d docs/docs/[0-9]* | sort -V | tail -1)
-
-  # Extract the version number from the latest directory path
-  local latest_version=$(basename "${latest}")  
-
-  # Output the latest version number
-  echo "${latest_version}"  
+  basename $(ls -d docs/docs/*/ | sort -V | tail -1)
 }
 
-# Function: create_nightly
-# Purpose: Creates a symbolic link for a 'nightly' version of the documentation.
 create_nightly () {
-  echo " --> create nightly"
-
-  # Remove any existing 'nightly' symbolic link to prevent conflicts
   rm -f docs/docs/nightly/
-
-  # Create a symbolic link pointing to the 'nightly' documentation
   ln -s ../nightly docs/docs/nightly
 }
 
-# Function: create_latest
-# Purpose: Creates a 'latest' version of the documentation based on a specified ICEBERG_VERSION.
-# Arguments:
-#   $1: ICEBERG_VERSION - The version number of the documentation to be treated as the latest.
 create_latest () {
-  echo " --> create latest"
-
   local ICEBERG_VERSION="$1"
+  assert_not_empty "${ICEBERG_VERSION}"
 
-  # Ensure ICEBERG_VERSION is not empty
-  assert_not_empty "${ICEBERG_VERSION}"  
-
-  # Output the provided ICEBERG_VERSION for verification
-  echo "${ICEBERG_VERSION}"  
-
-  # Remove any existing 'latest' directory and recreate it
   rm -rf docs/docs/latest/
   mkdir docs/docs/latest/
 
-  # Create symbolic links and copy configuration files for the 'latest' documentation
   ln -s "../${ICEBERG_VERSION}/docs" docs/docs/latest/docs
   cp "docs/docs/${ICEBERG_VERSION}/mkdocs.yml" docs/docs/latest/
 
   cd docs/docs/
-
-  # Update version information within the 'latest' documentation
-  update_version "latest"  
+  update_version "latest"
   cd -
 }
 
-# Function: update_version
-# Purpose: Updates version information within the mkdocs.yml file for a specified ICEBERG_VERSION.
-# Arguments:
-#   $1: ICEBERG_VERSION - The version number used for updating the mkdocs.yml file.
 update_version () {
-  echo " --> update version"
-
   local ICEBERG_VERSION="$1"
+  assert_not_empty "${ICEBERG_VERSION}"
 
-  # Ensure ICEBERG_VERSION is not empty
-  assert_not_empty "${ICEBERG_VERSION}"  
+  sed -i '' -E "s/(^site\_name:[[:space:]]+docs\/).*$/\1${ICEBERG_VERSION}/" ${ICEBERG_VERSION}/mkdocs.yml
+  sed -i '' -E "s/(^[[:space:]]*-[[:space:]]+Javadoc:.*\/javadoc\/).*$/\1${ICEBERG_VERSION}/" ${ICEBERG_VERSION}/mkdocs.yml
 
-
-
-  # Update version information within the mkdocs.yml file using sed commands
-  if [ "$(uname)" == "Darwin" ]
-  then
-    sed -i '' -E "s/(^site\_name:[[:space:]]+docs\/).*$/\1${ICEBERG_VERSION}/" ${ICEBERG_VERSION}/mkdocs.yml
-    sed -i '' -E "s/(^[[:space:]]*-[[:space:]]+Javadoc:.*\/javadoc\/).*$/\1${ICEBERG_VERSION}/" ${ICEBERG_VERSION}/mkdocs.yml
-  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]
-  then
-    sed -i'' -E "s/(^site_name:[[:space:]]+docs\/)[^[:space:]]+/\1${ICEBERG_VERSION}/" "${ICEBERG_VERSION}/mkdocs.yml"
-    sed -i'' -E "s/(^[[:space:]]*-[[:space:]]+Javadoc:.*\/javadoc\/).*$/\1${ICEBERG_VERSION}/" "${ICEBERG_VERSION}/mkdocs.yml"
-  fi
-
+  #sed -i '' -E "s/    \- latest: '\!include docs\/docs\/latest\/mkdocs\.yml'/a    \- ${ICEBERG_VERSION}: '\!include docs\/docs\/${ICEBERG_VERSION}\/mkdocs\.yml/" ../../mkdocs.yml
 }
-
-
-
-# Function: search_exclude_versioned_docs
-# Purpose: Excludes versioned documentation from search indexing by modifying .md files.
-# Arguments:
-#   $1: ICEBERG_VERSION - The version number of the documentation to exclude from search indexing.
+# https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-search/#search-exclusion
 search_exclude_versioned_docs () {
-  echo " --> search exclude version docs"
   local ICEBERG_VERSION="$1"
-
-  # Ensure ICEBERG_VERSION is not empty
-  assert_not_empty "${ICEBERG_VERSION}"  
+  assert_not_empty "${ICEBERG_VERSION}"
 
   cd "${ICEBERG_VERSION}/docs/"
-
-  # Modify .md files to exclude versioned documentation from search indexing
+  
   python3 -c "import os
 for f in filter(lambda x: x.endswith('.md'), os.listdir()): lines = open(f).readlines(); open(f, 'w').writelines(lines[:2] + ['search:\n', '  exclude: true\n'] + lines[2:]);"
-
+  
   cd -
 }
 
-# Function: pull_versioned_docs
-# Purpose: Sets up local worktrees for the documentation and performs operations related to different versions.
 pull_versioned_docs () {
-  echo " --> pull version docs"
-  
-  # Ensure the remote repository for documentation exists and is up-to-date
-  create_or_update_docs_remote  
-
-  # Add local worktrees for documentation and javadoc from the remote repository
+  create_or_update_docs_remote
   git worktree add docs/docs "${REMOTE}/docs"
   git worktree add docs/javadoc "${REMOTE}/javadoc"
   
-  # Retrieve the latest version of documentation for processing
-  local latest_version=$(get_latest_version)  
-
-  # Output the latest version for debugging purposes
-  echo "Latest version is: ${latest_version}" 
-  
-  # Create the 'latest' version of documentation
-  create_latest "${latest_version}"  
-
-  # Create the 'nightly' version of documentation
-  create_nightly  
+  create_latest $(get_latest_version)
+  create_nightly
 }
 
-# Function: clean
-# Purpose: Cleans up artifacts and temporary files generated during documentation management.
 clean () {
-  echo " --> clean"
+  set +e # avoid exit if any step in clean fails
 
-  # Temporarily disable script exit on errors to ensure cleanup continues
-  set +e 
+  rm -rf docs/docs/latest  &> /dev/null
+  rm -f docs/docs/nightly  &> /dev/null
 
-  # Remove 'latest' and 'nightly' directories and related Git worktrees
-  rm -rf docs/docs/latest &> /dev/null
-  rm -f docs/docs/nightly &> /dev/null
   git worktree remove docs/docs &> /dev/null
   git worktree remove docs/javadoc &> /dev/null
 
-  # Remove any additional temporary artifacts (e.g., 'site/' directory)
   rm -rf site/ &> /dev/null
 
-  set -e # Re-enable script exit on errors
+  set -e
 }
-
