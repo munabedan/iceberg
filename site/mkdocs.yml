@@ -23,16 +23,17 @@ theme:
   logo: assets/images/iceberg-logo-icon.png
   favicon: assets/images/favicon-96x96.png
   features:
+    - content.tabs.link
+    - content.code.copy
+    - content.code.annotate
     - navigation.tabs
     - navigation.path
     - navigation.top
     - navigation.tracking
-    - toc.follow
+    - offline
     - search.suggest
     - search.highlight
-    - content.tabs.link
-    - content.code.copy
-    - content.code.annotate
+    - toc.follow
 
 plugins:
   - search
@@ -40,6 +41,8 @@ plugins:
       include_yaml:
         - variables.yml
   - monorepo
+  - offline:
+      enabled: !ENV [OFFLINE, false]
 
 nav:
   - Quickstart:
@@ -47,9 +50,10 @@ nav:
     - Hive: hive-quickstart.md
   - Docs: 
     - nightly: '!include docs/docs/nightly/mkdocs.yml'
-#    - latest: '!include docs/docs/latest/mkdocs.yml'
-#    - 1.3.1: '!include docs/docs/1.3.1/mkdocs.yml'
-#    - 1.3.0: '!include docs/docs/1.3.0/mkdocs.yml'
+    - latest: '!include docs/docs/latest/mkdocs.yml'
+    - 1.4.2: '!include docs/docs/1.4.2/mkdocs.yml'
+    - 1.4.1: '!include docs/docs/1.4.1/mkdocs.yml'
+    - 1.4.0: '!include docs/docs/1.4.0/mkdocs.yml'
   - Releases: releases.md
   - Roadmap: roadmap.md
   - Blogs: blogs.md
