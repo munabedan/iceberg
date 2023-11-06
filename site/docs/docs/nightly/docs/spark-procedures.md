@@ -123,7 +123,7 @@ Unlike rollback, the snapshot is not required to be an ancestor of the current t
 |---------------|-----------|------|-------------|
 | `table`       | ✔️  | string | Name of the table to update |
 | `snapshot_id` | | long   | Snapshot ID to set as current |
-| `ref` | | string | Snapshot Referece (branch or tag) to set as current |
+| `ref` | | string | Snapshot Reference (branch or tag) to set as current |
 
 Either `snapshot_id` or `ref` must be provided but not both.
 
@@ -640,7 +640,7 @@ Warning : Files added by this method can be physically deleted by Iceberg operat
 | `changed_partition_count` | long | The number of partitioned changed by this command |
 
 !!! warning
-    Changed_partition_count will be 0 when table property `compatibility.snapshot-id-inheritance.enabled` is set to true
+    Changed_partition_count will be 0 when table property `compatibility.snapshot-id-inheritance.enabled` is set to true or if the table format version is > 1.
 
 #### Examples
 
