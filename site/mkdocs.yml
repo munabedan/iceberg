@@ -24,8 +24,6 @@ site_name: Apache Iceberg
 
 theme:
   custom_dir: overrides
-  static_templates:
-    - home.html
   name: material
   language: en
   logo: assets/images/iceberg-logo-icon.png
@@ -121,3 +119,10 @@ watch:
   - nav.yml
   - overrides
 
+copyright: |
+  Apache Iceberg, Iceberg, Apache, the Apache feather logo, and the Apache Iceberg project logo are</br>either registered trademarks or trademarks of The Apache Software Foundation. Copyright &copy; 2023</br>The Apache Software Foundation, Licensed under the <a href="https://www.apache.org/licenses/">Apache License, Version 2.0</a>.</br></br>
+
+
+extra_css:
+  - assets/stylesheets/extra.css
+  - assets/javascript/extra.js
