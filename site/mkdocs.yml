@@ -24,6 +24,8 @@ site_name: Apache Iceberg
 
 theme:
   custom_dir: overrides
+  static_templates:
+    - home.html
   name: material
   language: en
   logo: assets/images/iceberg-logo-icon.png
@@ -31,7 +33,7 @@ theme:
   font:
     text: Nunito Sans
   palette:
-    scheme: iceberg  
+    scheme: Iceberg  
   features:
     - content.tabs.link
     - content.code.copy
@@ -45,6 +47,7 @@ theme:
     - search.highlight
     - toc.follow
 
+
 plugins:
   - search
   - macros:
@@ -53,37 +56,6 @@ plugins:
   - monorepo
   - offline:
       enabled: !ENV [OFFLINE, false]
-
-nav:
-  - Quickstart:
-    - Spark: spark-quickstart.md
-    - Hive: hive-quickstart.md
-  - Docs: 
-    - nightly: '!include docs/docs/nightly/mkdocs.yml'
-    - latest: '!include docs/docs/latest/mkdocs.yml'
-    - 1.4.2: '!include docs/docs/1.4.2/mkdocs.yml'
-    - 1.4.1: '!include docs/docs/1.4.1/mkdocs.yml'
-    - 1.4.0: '!include docs/docs/1.4.0/mkdocs.yml'
-  - Releases: releases.md
-  - Roadmap: roadmap.md
-  - Blogs: blogs.md
-  - Talks: talks.md
-  - Vendors: vendors.md
-  - Project: 
-    - Join: community.md
-    - Spec: spec.md
-    - View spec: view-spec.md
-    - Puffin spec: puffin-spec.md
-    - Multi-engine support: multi-engine-support.md
-    - How to release: how-to-release.md
-    - Terms: terms.md
-  - ASF:
-    - community.md 
-    - Sponsorship: https://www.apache.org/foundation/sponsorship.html
-    - Events: https://www.apache.org/events/current-event.html
-    - License: https://www.apache.org/licenses/
-    - Security: https://www.apache.org/security/
-    - Sponsors: https://www.apache.org/foundation/thanks.html
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -119,10 +91,12 @@ watch:
   - nav.yml
   - overrides
 
-copyright: |
-  Apache Iceberg, Iceberg, Apache, the Apache feather logo, and the Apache Iceberg project logo are</br>either registered trademarks or trademarks of The Apache Software Foundation. Copyright &copy; 2023</br>The Apache Software Foundation, Licensed under the <a href="https://www.apache.org/licenses/">Apache License, Version 2.0</a>.</br></br>
-
-
 extra_css:
   - assets/stylesheets/extra.css
+  - assets/stylesheets/home.css
   - assets/javascript/extra.js
+
+watch:
+  - nav.yml
+  - overrides
+
