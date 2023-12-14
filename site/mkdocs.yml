@@ -77,19 +77,6 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - tables
   - md_in_html
-  - toc:
-      permalink: 🔗
-
-extra_css:
-  - assets/stylesheets/extra.css
-  - assets/stylesheets/bootstrap-grid.css
-  - assets/stylesheets/bootstrap-buttons.css
-  - assets/stylesheets/home.css
-  - assets/javascript/extra.js
-
-watch:
-  - nav.yml
-  - overrides
 
 extra_css:
   - assets/stylesheets/extra.css

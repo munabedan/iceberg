@@ -1,14 +1,395 @@
-{#-
-    This file was automatically generated - do not edit
-  -#}
-  {% extends "main.html" %}
-  {% block tabs %}
-    {{ super() }}
-    
-  {% endblock %}
-  
-  {% block content %}
-  {{ super() }}
-  {% endblock %}
-  
-  {% block footer %}{% endblock %}
+<!-- Custom HTML site displayed as the Home chapter -->
+
+{% extends "main.html" %} {% block tabs %} {{ super() }}
+<style>
+  .md-main {
+    flex-grow: 0;
+  }
+
+  .md-main__inner {
+    display: flex;
+    height: 100%;
+  }
+
+  .tx-container {
+    padding-top: 0rem;
+    background: linear-gradient(to bottom,
+        var(--md-primary-fg-color),
+        hsla(160deg, 47%, 55%, 1) 99%,
+        #fff 99%);
+  }
+
+  .tx-hero {
+    margin: 32px 2.8rem;
+    color: var(--md-primary-bg-color);
+    justify-content: center;
+  }
+
+  .tx-hero h1 {
+    margin-bottom: 1rem;
+    color: currentColor;
+    font-weight: 700;
+  }
+
+  .tx-hero__content {
+    padding-bottom: 1rem;
+    margin: 0 auto;
+  }
+
+  .tx-hero__image {
+    width: 20rem;
+    height: 17rem;
+    order: 1;
+    padding-right: 2.5rem;
+  }
+
+  .tx-hero__image img {
+    width:500px;
+  }
+
+  .tx-hero .md-button {
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    color: var(--md-primary-bg-color);
+  }
+
+  .tx-hero .md-button--primary {
+    background-color: var(--md-primary-bg-color);
+    color: hsla(280deg, 37%, 48%, 1);
+    border-color: var(--md-primary-bg-color);
+  }
+
+  .tx-hero .md-button:focus,
+  .tx-hero .md-button:hover {
+    background-color: var(--md-accent-fg-color);
+    color: var(--md-default-bg-color);
+    border-color: var(--md-accent-fg-color);
+  }
+
+  .feature-item h2 svg {
+    height: 30px;
+    float: left;
+    margin-right: 10px;
+    transform: translateY(10%);
+  }
+
+  .top-hr {
+    margin-top: 42px;
+  }
+
+  .feature-item {
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    box-sizing: border-box;
+    padding: 0 15px;
+    word-break: break-word;
+  }
+
+  .feature-item h2 {
+    color: #333;
+    font-weight: 300;
+    font-size: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: inherit;
+  }
+
+  .feature-item p {
+    font-size: 16px;
+    line-height: 1.8em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    color: #111;
+    margin: 0 0 10px;
+    display: block;
+  }
+
+  @media screen and (max-width: 30em) {
+    .tx-hero h1 {
+      font-size: 1.4rem;
+    }
+  }
+
+  @media screen and (min-width: 60em) {
+    .md-sidebar--secondary {
+      display: none;
+    }
+
+    .tx-hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tx-hero__content {
+      max-width: 22rem;
+      margin-top: 3.5rem;
+      margin-bottom: 3.5rem;
+      margin-left: 1rem;
+      margin-right: 4rem;
+      align-items: center;
+    }
+  }
+
+  @media screen and (min-width: 76.25em) {
+    .md-sidebar--primary {
+      display: none;
+    }
+
+    .top-hr {
+      width: 100%;
+      display: flex;
+      max-width: 61rem;
+      margin-right: auto;
+      margin-left: auto;
+      padding: 0 0.2rem;
+    }
+
+    .bottom-hr {
+      margin-top: 10px;
+      width: 100%;
+      display: flex;
+      max-width: 61rem;
+      margin-right: auto;
+      margin-left: auto;
+      padding: 0 0.2rem;
+    }
+
+    .feature-item {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .feature-item:hover {
+      background-color: #526cfe47;
+      border-radius: 3px;
+    }
+  }
+
+  .hr {
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .text-center {
+    text-align: center;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 15px;
+    font-family: "Lato", sans-serif;
+    font-size: 23px;
+    font-weight: 300;
+    padding-bottom: 10px;
+  }
+
+</style>
+
+<!-- Main site Entry button descriptions -->
+<section class="tx-container">
+  <div class="md-grid md-typeset">
+    <div class="tx-hero">
+      <div class="tx-hero__image">
+        <img src="assets/images/iceberg-vector-image-asset.png"  draggable="false" />
+      </div>
+      <div class="tx-hero__content">
+        <h1>Apache Iceberg</h1>
+        <p>The open table format for analytic datasets.</p>
+        <a title="Community" class="md-button md-button--primary">
+          Community
+        </a>
+        <a title="GitHub" class="md-button"> GitHub </a>
+        <a title="Slack" class="md-button md-button--primary"> Slack </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<link href="https://cdn.jsdelivr.net/gh/apache/iceberg-docs@main/iceberg-theme/static/css/termynal.css"
+  rel="stylesheet" />
+<style>
+  section#intro {
+    display: block;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .intro-header {
+    background: url(assets/images/intro-bg.webp) no-repeat center center;
+    background-size: cover;
+  }
+</style>
+
+<section id="intro">
+  <div class="intro-header"></div>
+</section>
+
+
+<div class="container">
+  <div class="row center-vertically">
+      <h1>What is Iceberg?
+      </h1>
+      <h2>
+        Iceberg is a high-performance format for huge analytic tables. Iceberg brings the reliability and simplicity of
+        SQL tables to big data, while making it possible for engines like Spark, Trino, Flink, Presto, Hive and Impala
+        to safely work with the same tables, at the same time.
+
+      </h2>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-6 center-vertically">
+      <h1>Expressive SQL</h1>
+      <h2>
+        Iceberg supports flexible SQL commands to merge new data, update
+        existing rows, and perform targeted deletes. Iceberg can eagerly rewrite
+        data files for read performance, or it can use delete deltas for faster
+        updates.
+      </h2>
+    </div>
+
+    <div class="col-6">
+      <div class="termynal-container">
+        <div id="termynal-expressive-sql" data-termynal="" data-ty-startdelay="2000" data-ty-typedelay="20"
+          data-ty-linedelay="500" style="width: 445px; min-height: 333.344px">
+          <span data-ty="input" data-ty-prompt="sql&gt;">MERGE INTO prod.nyc.taxis pt</span><span data-ty="input"
+            data-ty-prompt="">USING (SELECT * FROM staging.nyc.taxis) st</span><span data-ty="input"
+            data-ty-prompt="">ON pt.id = st.id</span><span data-ty="input" data-ty-prompt="">WHEN NOT MATCHED THEN
+            INSERT *;</span><span data-ty="">Done!</span><span data-ty="input" data-ty-prompt="sql&gt;"></span>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<br />
+
+
+<div class="container">
+  <div class="row">
+
+    <div class="col-6">
+      <div class="termynal-container">
+        <div style="left: 0;" id="termynal" data-termynal="" data-ty-startdelay="4000" data-ty-typedelay="20"
+          data-ty-linedelay="500" style="width: 445px; min-height: 474.516px">
+          <span data-ty="input" data-ty-prompt="sql&gt;">ALTER TABLE taxis</span><span data-ty="input"
+            data-ty-prompt="">ALTER COLUMN trip_distance</span><span data-ty="input" data-ty-prompt=""
+            data-ty-delay="2500">TYPE double;</span><span data-ty="">Done!</span><span data-ty="input"
+            data-ty-prompt="sql&gt;">ALTER TABLE taxis</span><span data-ty="input" data-ty-prompt="">ALTER COLUMN
+            trip_distance</span><span data-ty="input" data-ty-prompt="">AFTER fare;</span><span
+            data-ty="">Done!</span><span data-ty="input" data-ty-prompt="sql&gt;">ALTER TABLE taxis</span><span
+            data-ty="input" data-ty-prompt="">RENAME COLUMN trip_distance</span><span data-ty="input"
+            data-ty-prompt="">TO distance;</span><span data-ty="">Done!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 center-vertically">
+      <h1>Full Schema Evolution</h1>
+      <h2>
+        Schema evolution just works. Adding a column won't bring back "zombie"🧟
+        data. Columns can be renamed and reordered. Best of all, schema changes
+        never require rewriting your table.
+      </h2>
+    </div>
+  </div>
+</div>
+
+<br />
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-6 center-vertically">
+      <h1>Hidden Partitioning</h1>
+      <h2>
+        Iceberg handles the tedious and error-prone task of producing partition values for rows in a table and skips
+        unnecessary partitions and files automatically. No extra filters are needed for fast queries, and table layout
+        can be updated as data or queries change.
+      </h2>
+    </div>
+    <div class="col-6">
+      <div class="termynal-container">
+        <div>
+          <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+          <lottie-player src="https://iceberg.apache.org/lottie/hidden-partitioning-animation.json"
+            background="transparent" speed="0.5" style="width: 600px; height: 400px;" loop="" autoplay="">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+
+
+
+<div class="container">
+  <div class="row">
+
+    <div class="col-6">
+      <div class="termynal-container">
+        <div style="left: 0;" id="termynal-time-travel" data-termynal="" data-ty-startdelay="6000"
+          data-ty-typedelay="20" data-ty-linedelay="500" style="width: 445px; min-height: 390.516px;"><span
+            data-ty="input" data-ty-prompt="sql&gt;">SELECT count(*) FROM nyc.taxis</span><span
+            data-ty="">2,853,020</span><span data-ty="input" data-ty-prompt="sql&gt;">SELECT count(*) FROM nyc.taxis FOR
+            VERSION AS OF
+            2188465307835585443</span><span data-ty="">2,798,371</span><span data-ty="input"
+            data-ty-prompt="sql&gt;">SELECT count(*) FROM nyc.taxis FOR TIMESTAMP AS OF TIMESTAMP '2022-01-01
+            00:00:00.000000 Z'</span><span data-ty="">2,798,371</span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="col-6 center-vertically">
+      <h1>Time Travel and Rollback</h1>
+      <h2>
+        Time-travel enables reproducible queries that use exactly the same table snapshot, or lets users easily examine
+        changes. Version rollback allows users to quickly correct problems by resetting tables to a good state. </h2>
+    </div>
+  </div>
+</div>
+
+<br />
+
+<div class="container">
+  <div class="row">
+    <div class="col-6 center-vertically">
+      <h1>Data Compaction</h1>
+      <h2>
+        Data compaction is supported out-of-the-box and you can choose from different rewrite strategies such as
+        bin-packing or sorting to optimize file layout and size.
+    </div>
+    <div class="col-6">
+      <div class="termynal-container">
+        <div id="termynal-data-compaction" data-termynal="" data-ty-startdelay="8000" data-ty-typedelay="20"
+          data-ty-linedelay="500" style="width: 445px; min-height: 192.172px;"><span data-ty="input"
+            data-ty-prompt="sql&gt;">CALL system.rewrite_data_files("nyc.taxis");</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/apache/iceberg-docs@main/iceberg-theme/static/js/termynal.js"
+  data-termynal-container="#termynal|#termynal-data-compaction|#termynal-expressive-sql|#termynal-time-travel"></script>
+
+{% endblock %} {% block footer
+%} {% endblock%}
