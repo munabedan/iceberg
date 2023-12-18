@@ -33,7 +33,7 @@ theme:
   font:
     text: Nunito Sans
   palette:
-    scheme: Iceberg  
+    scheme: iceberg  
   features:
     - content.tabs.link
     - content.code.copy
@@ -80,6 +80,8 @@ markdown_extensions:
 
 extra_css:
   - assets/stylesheets/extra.css
+  - assets/stylesheets/bootstrap-grid.css
+  - assets/stylesheets/bootstrap-buttons.css
   - assets/stylesheets/home.css
   - assets/javascript/extra.js
 
