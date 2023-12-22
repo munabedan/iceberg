@@ -1,8 +1,10 @@
 {#- This file was automatically generated - do not edit -#} {% extends
 "main.html" %} {% block tabs %} {{ super() }}
 
-<link href="https://cdn.jsdelivr.net/gh/apache/iceberg-docs@main/iceberg-theme/static/css/termynal.css"
-  rel="stylesheet" />
+<link
+  href="https://cdn.jsdelivr.net/gh/apache/iceberg-docs@main/iceberg-theme/static/css/termynal.css"
+  rel="stylesheet"
+/>
 
 <section class="mdx-container">
   <div class="container">
@@ -14,19 +16,33 @@
           <hr class="intro-divider" />
           <ul class="list-inline intro-social-buttons">
             <li>
-              <a href="/community" class="btn btn-default btn-lg"><i
-                  class="fa fa-comments fa-fw"></i>
-                <span class="network-name">Community</span></a>
+            
+              <a href="/community" class="btn btn-default btn-lg">
+                <span class="fa fa-fw">
+                  {% include ".icons/fontawesome/solid/comments.svg" %} 
+                </span>
+                <span class="network-name">Community</span></a
+              >
             </li>
             <li>
-              <a href="https://github.com/apache/iceberg" class="btn btn-default btn-lg"><i
-                  class="fa fa-github fa-fw"></i>
-                <span class="network-name">github</span></a>
+              <a
+                href="https://github.com/apache/iceberg"
+                class="btn btn-default btn-lg"
+                ><span class="fa fa-fw">
+                  {% include ".icons/fontawesome/brands/github.svg" %} 
+                </span>
+                <span class="network-name">github</span></a
+              >
             </li>
             <li>
-              <a href="https://join.slack.com/t/apache-iceberg/shared_invite/zt-287g3akar-K9Oe_En5j1UL7Y_Ikpai3A"
-                class="btn btn-default btn-lg"><i class="fa fa-slack fa-fw"></i>
-                <span class="network-name">slack</span></a>
+              <a
+                href="https://join.slack.com/t/apache-iceberg/shared_invite/zt-287g3akar-K9Oe_En5j1UL7Y_Ikpai3A"
+                class="btn btn-default btn-lg"
+                ><span class="fa fa-fw">
+                  {% include ".icons/fontawesome/brands/slack.svg" %} 
+                </span>
+                <span class="network-name">slack</span></a
+              >
             </li>
           </ul>
         </div>
@@ -53,7 +69,9 @@
         <div class="button-box">
           <ul class="list-inline intro-social-buttons">
             <li>
-              <a href="/spark-quickstart" class="btn btn-default btn-lg"><span class="network-name">Learn More</span></a>
+              <a href="/spark-quickstart" class="btn btn-default btn-lg"
+                ><span class="network-name">Learn More</span></a
+              >
             </li>
             <ul></ul>
           </ul>
@@ -81,18 +99,32 @@
 
           <ul class="list-inline intro-social-buttons">
             <li>
-              <a href="/docs/latest/spark-writes/" class="btn btn-default btn-lg"><span class="network-name">Learn
-                  More</span></a>
+              <a
+                href="/docs/latest/spark-writes/"
+                class="btn btn-default btn-lg"
+                ><span class="network-name">Learn More</span></a
+              >
             </li>
           </ul>
         </div>
         <div class="col-lg-5 col-lg col-sm-6">
-          <div id="termynal-expressive-sql" data-termynal="" data-ty-startdelay="2000" data-ty-typedelay="20"
-            data-ty-linedelay="500" style="width: 445px; min-height: 338.5px">
-            <span data-ty="input" data-ty-prompt="sql>">MERGE INTO prod.nyc.taxis pt</span><span data-ty="input"
-              data-ty-prompt="">USING (SELECT * FROM staging.nyc.taxis) st</span><span data-ty="input"
-              data-ty-prompt="">ON pt.id = st.id</span><span data-ty="input" data-ty-prompt="">WHEN NOT MATCHED THEN
-              INSERT *;</span><span data-ty="">Done!</span><span data-ty="input" data-ty-prompt="sql>"></span>
+          <div
+            id="termynal-expressive-sql"
+            data-termynal=""
+            data-ty-startdelay="2000"
+            data-ty-typedelay="20"
+            data-ty-linedelay="500"
+            style="width: 445px; min-height: 338.5px"
+          >
+            <span data-ty="input" data-ty-prompt="sql>"
+              >MERGE INTO prod.nyc.taxis pt</span
+            ><span data-ty="input" data-ty-prompt=""
+              >USING (SELECT * FROM staging.nyc.taxis) st</span
+            ><span data-ty="input" data-ty-prompt="">ON pt.id = st.id</span
+            ><span data-ty="input" data-ty-prompt=""
+              >WHEN NOT MATCHED THEN INSERT *;</span
+            ><span data-ty="">Done!</span
+            ><span data-ty="input" data-ty-prompt="sql>"></span>
           </div>
         </div>
       </div>
@@ -100,7 +132,9 @@
   </div>
   <div class="content-section-b">
     <div class="container">
-      <div class="d-flex flex-column flex-lg-row-reverse justify-content-around">
+      <div
+        class="d-flex flex-column flex-lg-row-reverse justify-content-around"
+      >
         <div class="col-lg-5 col-lg-offset-1 col-sm-push-6 d-flex flex-column">
           <hr class="section-heading-spacer" />
           <div class="clearfix"></div>
@@ -113,22 +147,37 @@
 
           <ul class="list-inline intro-social-buttons">
             <li>
-              <a href="/docs/latest/evolution/" class="btn btn-default btn-lg"><span class="network-name">Learn
-                  More</span></a>
+              <a href="/docs/latest/evolution/" class="btn btn-default btn-lg"
+                ><span class="network-name">Learn More</span></a
+              >
             </li>
           </ul>
         </div>
         <div class="col-lg-5 col-sm-pull-6 col-sm-6">
-          <div id="termynal" data-termynal="" data-ty-startdelay="4000" data-ty-typedelay="20" data-ty-linedelay="500"
-            style="width: 445px; min-height: 484.5px">
-            <span data-ty="input" data-ty-prompt="sql>">ALTER TABLE taxis</span><span data-ty="input"
-              data-ty-prompt="">ALTER COLUMN trip_distance</span><span data-ty="input" data-ty-prompt=""
-              data-ty-delay="2500">TYPE double;</span><span data-ty="">Done!</span><span data-ty="input"
-              data-ty-prompt="sql>">ALTER TABLE taxis</span><span data-ty="input" data-ty-prompt="">ALTER COLUMN
-              trip_distance</span><span data-ty="input" data-ty-prompt="">AFTER fare;</span><span
-              data-ty="">Done!</span><span data-ty="input" data-ty-prompt="sql>">ALTER TABLE taxis</span><span
-              data-ty="input" data-ty-prompt="">RENAME COLUMN trip_distance</span><span data-ty="input"
-              data-ty-prompt="">TO distance;</span><span data-ty="">Done!</span>
+          <div
+            id="termynal"
+            data-termynal=""
+            data-ty-startdelay="4000"
+            data-ty-typedelay="20"
+            data-ty-linedelay="500"
+            style="width: 445px; min-height: 484.5px"
+          >
+            <span data-ty="input" data-ty-prompt="sql>">ALTER TABLE taxis</span
+            ><span data-ty="input" data-ty-prompt=""
+              >ALTER COLUMN trip_distance</span
+            ><span data-ty="input" data-ty-prompt="" data-ty-delay="2500"
+              >TYPE double;</span
+            ><span data-ty="">Done!</span
+            ><span data-ty="input" data-ty-prompt="sql>">ALTER TABLE taxis</span
+            ><span data-ty="input" data-ty-prompt=""
+              >ALTER COLUMN trip_distance</span
+            ><span data-ty="input" data-ty-prompt="">AFTER fare;</span
+            ><span data-ty="">Done!</span
+            ><span data-ty="input" data-ty-prompt="sql>">ALTER TABLE taxis</span
+            ><span data-ty="input" data-ty-prompt=""
+              >RENAME COLUMN trip_distance</span
+            ><span data-ty="input" data-ty-prompt="">TO distance;</span
+            ><span data-ty="">Done!</span>
           </div>
         </div>
       </div>
@@ -151,24 +200,34 @@
 
           <ul class="list-inline intro-social-buttons">
             <li>
-              <a href="/docs/latest/partitioning/#icebergs-hidden-partitioning" class="btn btn-default btn-lg"><span
-                  class="network-name">Learn More</span></a>
+              <a
+                href="/docs/latest/partitioning/#icebergs-hidden-partitioning"
+                class="btn btn-default btn-lg"
+                ><span class="network-name">Learn More</span></a
+              >
             </li>
           </ul>
         </div>
 
         <div class="col-lg-5 col-lg col-sm-12">
           <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-          <lottie-player src="https://iceberg.apache.org/lottie/hidden-partitioning-animation.json"
-            background="transparent" speed="0.5" style="width: 600px; height: 400px" loop=""
-            autoplay=""></lottie-player>
+          <lottie-player
+            src="https://iceberg.apache.org/lottie/hidden-partitioning-animation.json"
+            background="transparent"
+            speed="0.5"
+            style="width: 600px; height: 400px"
+            loop=""
+            autoplay=""
+          ></lottie-player>
         </div>
       </div>
     </div>
   </div>
   <div class="content-section-b">
     <div class="container">
-      <div class="d-flex flex-column flex-lg-row-reverse justify-content-around">
+      <div
+        class="d-flex flex-column flex-lg-row-reverse justify-content-around"
+      >
         <div class="col-lg-5 col-lg-offset-1 col-sm-push-6 d-flex flex-column">
           <hr class="section-heading-spacer" />
           <div class="clearfix"></div>
@@ -182,21 +241,35 @@
 
           <ul class="list-inline intro-social-buttons">
             <li>
-              <a href="/docs/latest/spark-queries/#time-travel" class="btn btn-default btn-lg"><span
-                  class="network-name">Learn More</span></a>
+              <a
+                href="/docs/latest/spark-queries/#time-travel"
+                class="btn btn-default btn-lg"
+                ><span class="network-name">Learn More</span></a
+              >
             </li>
           </ul>
         </div>
         <div class="col-lg-5 col-sm-pull-6">
           <div class="termynal-container">
-            <div id="termynal-time-travel" data-termynal="" data-ty-startdelay="6000" data-ty-typedelay="20"
-              data-ty-linedelay="500" style="width: 445px; min-height: 391.9px">
-              <span data-ty="input" data-ty-prompt="sql>">SELECT count(*) FROM nyc.taxis</span><span
-                data-ty="">2,853,020</span><span data-ty="input" data-ty-prompt="sql>">SELECT count(*) FROM nyc.taxis
-                FOR VERSION AS OF
-                2188465307835585443</span><span data-ty="">2,798,371</span><span data-ty="input"
-                data-ty-prompt="sql>">SELECT count(*) FROM nyc.taxis FOR TIMESTAMP AS OF TIMESTAMP
-                '2022-01-01 00:00:00.000000 Z'</span><span data-ty="">2,798,371</span>
+            <div
+              id="termynal-time-travel"
+              data-termynal=""
+              data-ty-startdelay="6000"
+              data-ty-typedelay="20"
+              data-ty-linedelay="500"
+              style="width: 445px; min-height: 391.9px"
+            >
+              <span data-ty="input" data-ty-prompt="sql>"
+                >SELECT count(*) FROM nyc.taxis</span
+              ><span data-ty="">2,853,020</span
+              ><span data-ty="input" data-ty-prompt="sql>"
+                >SELECT count(*) FROM nyc.taxis FOR VERSION AS OF
+                2188465307835585443</span
+              ><span data-ty="">2,798,371</span
+              ><span data-ty="input" data-ty-prompt="sql>"
+                >SELECT count(*) FROM nyc.taxis FOR TIMESTAMP AS OF TIMESTAMP
+                '2022-01-01 00:00:00.000000 Z'</span
+              ><span data-ty="">2,798,371</span>
             </div>
           </div>
         </div>
@@ -217,9 +290,17 @@
           </p>
         </div>
         <div class="col-lg-5 col-lg">
-          <div id="termynal-data-compaction" data-termynal="" data-ty-startdelay="8000" data-ty-typedelay="20"
-            data-ty-linedelay="500" style="width: 445px; min-height: 192.7px">
-            <span data-ty="input" data-ty-prompt="sql>">CALL system.rewrite_data_files("nyc.taxis");</span>
+          <div
+            id="termynal-data-compaction"
+            data-termynal=""
+            data-ty-startdelay="8000"
+            data-ty-typedelay="20"
+            data-ty-linedelay="500"
+            style="width: 445px; min-height: 192.7px"
+          >
+            <span data-ty="input" data-ty-prompt="sql>"
+              >CALL system.rewrite_data_files("nyc.taxis");</span
+            >
           </div>
         </div>
       </div>
@@ -227,23 +308,10 @@
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/gh/apache/iceberg-docs@main/iceberg-theme/static/js/termynal.js"
-  data-termynal-container="#termynal|#termynal-data-compaction|#termynal-expressive-sql|#termynal-time-travel"></script>
+<script
+  src="https://cdn.jsdelivr.net/gh/apache/iceberg-docs@main/iceberg-theme/static/js/termynal.js"
+  data-termynal-container="#termynal|#termynal-data-compaction|#termynal-expressive-sql|#termynal-time-travel"
+></script>
 
-
-
-  <style>
-
-.md-main{
-  display: none;
-}
-  </style>
-
-{% endblock %}
- {% block content %} 
- {{ super() }} 
- {% endblock %}
-  {% block footer%}
-  {% include "partials/cto.html" %}
-
-  {% endblock %}
+{% endblock %} {% block content %} {{ super() }} {% endblock %} {% block
+footer%} {% include "partials/cto.html" %} {% endblock %}

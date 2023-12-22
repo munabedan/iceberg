@@ -28,7 +28,7 @@ theme:
     - home.html
   name: material
   language: en
-  logo: assets/images/iceberg-logo-icon.png
+  logo: assets/images/Iceberg-logo.svg
   favicon: assets/images/favicon-96x96.png
   font:
     text: Nunito Sans
@@ -73,8 +73,8 @@ markdown_extensions:
   - pymdownx.mark
   - attr_list
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - tables
   - md_in_html
 
@@ -83,6 +83,8 @@ extra_css:
   - assets/stylesheets/bootstrap-grid.css
   - assets/stylesheets/bootstrap-buttons.css
   - assets/stylesheets/home.css
+  
+extra_javascript:
   - assets/javascript/extra.js
 
 watch:

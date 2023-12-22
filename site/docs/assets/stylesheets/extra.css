@@ -40,7 +40,7 @@
   color: #f8f8f8;
   background: url("../images/intro-bg.webp") no-repeat center center;
   background-size: cover;
-  height: 70vh;
+  height: 32rem;
 }
 
 .intro-message {
@@ -353,9 +353,6 @@ header .md-search__input::placeholder {
   display: flex;
 }
 
-.md-sidebar--primary {
-  top: 88px;
-}
 
 #termynal-expressive-sql,
 #termynal-data-compaction {
@@ -386,7 +383,7 @@ p {
   #CTO
 \*------------------------------------*/
 .cto {
-  background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/footer-bg.webp");
+  background-image:linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../images/footer-bg.webp");
   background-size: cover;
   margin: 0;
   border: 0;
@@ -407,79 +404,10 @@ p {
 }
 
 
-
-.cto .bootstrap-btn {
-  display: inline-block;
-  font-weight: 300;
-  color: var(--color-default-white);
-  text-align: center;
-  border: 1px solid transparent;
-  padding: .375rem .75rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  border-radius: .25rem;
-  background-color: var(--md-primary-fg-color);
-
-}
-
-
-.cto .bootstrap-btn:hover {
-  background-color: var(--color-default-outline);
-
-}
-
-.cto .button-ghost {
-  text-align: center;
-  margin-top: 10px !important;
-  font: inherit;
-  vertical-align: baseline;
-  text-decoration: none;
-  box-sizing: border-box;
-  -webkit-appearance: none;
-  cursor: pointer;
-  font-family: "Source Sans Pro", sans-serif;
-  font-weight: 300;
-  padding: 8px 24px;
-  border-radius: 6px;
-  line-height: 160%;
-  opacity: 1;
-  -webkit-transition: all .25s ease-in-out;
-  background-color: transparent;
-  color: var(--color-default-white);
-  border: 1px solid var(--color-default-white);
-  font-size: .8rem;
-  margin-top: 0;
-  margin-left: 15px;
-  display: inline-block;
-  width: 140px;
-}
-
-.cto .button-white {
-  text-align: center;
-  margin: 0;
-  font: inherit;
-  vertical-align: baseline;
-  text-decoration: none;
-  box-sizing: border-box;
-  -webkit-appearance: none;
-  cursor: pointer;
-  border: none;
-  font-family: "Source Sans Pro", sans-serif;
-  font-weight: 50;
-  padding: 8px 24px;
-  border-radius: 6px;
-  line-height: 160%;
-  opacity: 1;
-  -webkit-transition: all .25s ease-in-out;
-  background-color: var(--color-default-white);
-  color: var(--md-primary-fg-color);
+.cto .btn span{
   font-size: 16px;
-  margin-top: 0;
-  display: inline-block;
-  width: 140px;
-  margin-left: 0;
+  color: var(--color-default-primary);
 }
-
 
 .md-footer {
   background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/footer-bg.webp");
@@ -502,3 +430,31 @@ p {
 }
 
 
+.fa-fw {
+	width: 1em;
+  height: 1em;
+	text-align: center;
+}
+
+.fa {
+	display: inline-block;
+	font: normal normal normal 14px FontAwesome;
+	font-size: 16px;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.network-name {
+	text-transform: uppercase;
+	font-size: 14px;
+	font-weight: 400;
+	letter-spacing: 2px;
+}
+
+.md-header__button.md-logo img, .md-header__button.md-logo svg {
+	fill: currentcolor;
+	display: block;
+	height: 2.5rem;
+	width: auto;
+}
