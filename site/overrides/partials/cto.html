@@ -1,41 +1,37 @@
 <div class="cto">
-    <div class="container">
-        <span> Apache Iceberg, Iceberg, Apache, the Apache feather logo, and the Apache Iceberg project logo
-            are</br>either registered trademarks or trademarks of The Apache Software Foundation. Copyright &copy;
-            2023</br>The Apache Software Foundation, Licensed under the <a
-                href="https://www.apache.org/licenses/">Apache License, Version 2.0</a>.</br></br>
-        </span>
-        <ul class="list-inline intro-social-buttons">
-            <li>
-            
-              <a href="/community" class="btn btn-default btn-lg">
-                <span class="fa fa-fw">
-                  {% include ".icons/fontawesome/solid/comments.svg" %} 
-                </span>
-                <span class="network-name">Community</span></a
-              >
-            </li>
-            <li>
-              <a
-                href="https://github.com/apache/iceberg"
-                class="btn btn-default btn-lg"
-                ><span class="fa fa-fw">
-                  {% include ".icons/fontawesome/brands/github.svg" %} 
-                </span>
-                <span class="network-name">github</span></a
-              >
-            </li>
-            <li>
-              <a
-                href="https://join.slack.com/t/apache-iceberg/shared_invite/zt-287g3akar-K9Oe_En5j1UL7Y_Ikpai3A"
-                class="btn btn-default btn-lg"
-                ><span class="fa fa-fw">
-                  {% include ".icons/fontawesome/brands/slack.svg" %} 
-                </span>
-                <span class="network-name">slack</span></a
-              >
-            </li>
-          </ul>
+  <div class="container">
+    <span> Apache Iceberg, Iceberg, Apache, the Apache feather logo, and the Apache Iceberg project logo
+      are</br>either registered trademarks or trademarks of The Apache Software Foundation. Copyright &copy;
+      2023</br>The Apache Software Foundation, Licensed under the <a href="https://www.apache.org/licenses/">Apache
+        License, Version 2.0</a>.</br></br>
+    </span>
+    <ul class="list-inline intro-social-buttons">
+      
 
-    </div>
+      {% for social in config.extra.social %}
+
+    
+  
+      <!-- Compute title and render link -->
+      {% set title = social.name %}
+      {% if not title and "//" in social.link %}
+        {% set _, url = social.link.split("//") %}
+        {% set title  = social.title %}
+      {% endif %}
+     
+
+      <li>
+        <a class="btn btn-default btn-lg" href="{{ social.link }}" target="_blank">
+          <span class="fa fa-fw">
+            {% include ".icons/" ~ social.icon ~ ".svg" %}
+          </span>
+          <span class="network-name"> {{ title }}</span>
+        </a>
+      </li>
+    {% endfor %}
+
+     
+    </ul>
+
+  </div>
 </div>

@@ -20,7 +20,11 @@ extra:
   social:
     - icon: fontawesome/brands/github-alt
       link: https://github.com/apache/iceberg
+      title: github
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/@ApacheIceberg
+      title: youtube
     - icon: fontawesome/brands/slack
       link: https://join.slack.com/t/apache-iceberg/shared_invite/zt-1znkcg5zm-7_FE~pcox347XwZE3GNfPg
+      title: slack
+
