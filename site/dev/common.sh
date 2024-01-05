@@ -189,8 +189,6 @@ pull_versioned_docs () {
   # Ensure the remote repository for documentation exists and is up-to-date
   create_or_update_docs_remote  
 
-  rm -r docs/docs
-
   # Add local worktrees for documentation and javadoc from the remote repository
   git worktree add docs/docs "${REMOTE}/docs"
   git worktree add docs/javadoc "${REMOTE}/javadoc"
@@ -217,8 +215,6 @@ clean () {
   #rm -f docs/docs/nightly &> /dev/null
   git worktree remove docs/docs &> /dev/null
   git worktree remove docs/javadoc &> /dev/null
-  
-  git restore docs/docs
 
   # Remove any additional temporary artifacts (e.g., 'site/' directory)
   rm -rf site/ &> /dev/null
