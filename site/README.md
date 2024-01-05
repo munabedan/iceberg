@@ -35,107 +35,101 @@ In MkDocs, the [`docs_dir`](https://www.mkdocs.org/user-guide/configuration/#doc
 
 ### Iceberg docs layout
 
-In the Iceberg docs, since the top-level site and versioned docs are contained in the same directory, they all live under the `/site` directory of the main Iceberg repository. The `/site/docs` directory is named this way to follow the [MkDocs convention](https://www.mkdocs.org/user-guide/configuration/#docs_dir), while the `/site/docs/docs` directory is an analog to the "Docs" navigation tab. Under this directory, you'll find the `/site/docs/docs/nightly` directory, which contains the state of the documentation in the local revisions.
+The static Iceberg website and versioned documentation live together under the `/site` directory of the main Iceberg repository. The `/site/docs` directory is named that way to follow the [MkDocs convention](https://www.mkdocs.org/user-guide/configuration/#docs_dir), while the nested `/site/docs/docs` directory is an analog to the "Docs" navigation tab. The `/site/docs/nightly` directory contains the current state of the versioned documentation with local revisions.
 
-The non-versioned site pages are all the `/site/docs/.*md` files and the docs are the `/site/docs/docs/<version>/docs/*.md` files. Notice the location of the `mkdocs.yml`. Looking at this though, you may ask where the older versions and javadocs are.
+
+The static Iceberg site pages are Markdown files that live at `/site/docs/.*md`. The versioned documentation are Markdown files that are added at the nested docs directy `/site/docs/docs/<version>/docs/*.md` files. Notice the location of the `mkdocs.yml`. Looking at this though, you may ask where the older versions and javadocs are.
 
 ```
 ./site/
 ├── docs
 │   ├── assets
-│   ├── docs
-│   │   └── nightly
-│   │       ├── docs
-│   │       │   ├── assets
-│   │       │   ├── api.md
-│   │       │   ├── ...
-│   │       │   └── table-migration.md
-│   │       └── mkdocs.yml (versioned)
+│   ├── nightly
+│   │   ├── docs
+│   │   │   ├── assets
+│   │   │   ├── api.md
+│   │   │   ├── ...
+│   │   │   └── table-migration.md
+│   │   └── mkdocs.yml (versioned)
 │   ├── about.md
 │   ├── ...
 │   └── view-spec.md
-├── README.md
+├── ...
+├── Makefile
 ├── mkdocs.yml (non-versioned)
-├── requirements.txt
-└── variables.yml
+└── requirements.txt
 ```
 ### Building the versioned docs
 
-> [!IMPORTANT]  
-> This build process is currently missing older versions and the javadoc branches.
-> Until these branches are merged, these steps will not work.
+The Iceberg versioned docs are committed in the orphan `docs` branch and mounted using [git worktree](https://git-scm.com/docs/git-worktree) at build time. The `docs` branch contains the versioned documenation source files at the root. These versions exist at the `/site/docs/docs/<version>` directory once added to the worktree. The `nightly` and `latest` versions, are soft links to the `/site/docs/nightly` directory and greatest release version in the `docs` branch. There is also a `javadoc` branch that contains prior staticly generated versions of the javadocs mounted at `/site/docs/javadoc/<version>`.
 
-All previously versioned docs will be committed in `docs-<version>` branches and mounted using [git worktree](https://git-scm.com/docs/git-worktree) at build time. The worktree will pull these versions in following the `/site/docs/docs/<version>` convention. The `latest` version, will be a secondary copy of the most recent build version in the worktree, but pointing to `/site/docs/docs/latest`. There is also a `javadoc` branch that contains all prior static generation versions of the javadocs in a single tag.
+The docs are built, run, and released using [make](https://www.gnu.org/software/make/manual/make.html). The [Makefile](Makefile) and the [common shell script](dev/common.sh) support the following command:
+
+``` site > make help```
+> [build](dev/build.sh): Clean and build the site locally.
+> [clean](dev/clean.sh): Clean the local site.
+> [deploy](dev/deploy.sh): Clean, build, and deploy the Iceberg docs site.
+> help: Show help for each of the Makefile recipes.
+> [release](dev/release.sh): Release the current nightly docs as ICEBERG_VERSION (make release ICEBERG_VERSION=<MAJOR.MINOR.PATCH>).
+> [serve](dev/serve.sh): Clean, build, and run the site locally.
+
+To scaffold the versioned docs and build the project, run the `build` recipe. 
+
+```
+make build
+```
+
+This step will generate the following layout:
 
 ```
 ./site/
 └── docs
     ├── docs
-    │   ├── nightly
-    │   ├── latest
+    │   ├── nightly (symlink to /site/docs/nightly/)
+    │   ├── latest (symlink to /site/docs/1.4.0/)
     │   ├── 1.4.0 
     │   ├── 1.3.1
     │   └── ...
-    └── javadoc
-        ├── latest
-        ├── 1.4.0
-        ├── 1.3.1
-        └── ...
+    ├── javadoc
+    │   ├── latest
+    │   ├── 1.4.0
+    │   ├── 1.3.1
+    │   └── ...
+    └── nightly
 ```
 
-### Install
-
-1. (Optional) Set up venv
+To run this, run the `serve` recipe, which runs the `build` recipe and calls `mkdocs serve`. This will run locally at <http://localhost:8000>.
 ```
-python -m venv mkdocs_env
-source mkdocs_env/bin/activate
+make serve
 ```
 
-1. Install required Python libraries
+To clear all build files, run `clean`.
 ```
-pip install -r requirements.txt
-```
-
-#### Adding additional versioned documentation
-
-To build locally with additional docs versions, add them to your working tree.
-For now, I'm just adding a single version, and the javadocs directory.
-
-```
-git worktree add site/docs/docs/1.4.0 docs-1.4.0
-git worktree add site/docs/javadoc javadoc
+make clean
 ```
 
-## Build
+#### Offline mode
 
-Run the build command in the root directory, and optionally add `--clean` to force MkDocs to clear previously generated pages.
-
-```
-mkdocs build [--clean]
-```
-
-## Run
-
-Start MkDocs server locally to verify the site looks good.
+One of the great advantages to the MkDocs material plugin is the [offline feature](https://squidfunk.github.io/mkdocs-material/plugins/offline). You can view the Iceberg docs without the need of a server. To enable OFFLINE builds, add theOFFLINE environment variable to either `build` or `serve` recipes.
 
 ```
-mkdocs serve
+make build OFFLINE=true
 ```
+
+> [!WARNING]  
+> Building with offline mode disables the [use_directory_urls](https://www.mkdocs.org/user-guide/configuration/#use_directory_urls) setting, ensuring that users can open your documentation directly from the local file system. Do not enable this for releases or deployments. 
 
 ## Release process
 
-Deploying a version of the docs is a two step process:
- 1. ~~Cut a new release from the current branch revision. This creates a new branch `docs-<version>`.~~
-
+Deploying the docs is a two step process:
+ 1. Release a new version by copying the current nightly directory to a new version directory in the `docs` branch.
     ```
-    .github/bin/deploy_docs.sh -v 1.4.0
+    make release ICEBERG_VERSION=${ICEBERG_VERSION}
     ```
-
-    ~~See [deploy_docs.sh](.github/bin/deploy_docs.sh) for more details.~~
-
- 1. Make sure to add the new version to the list of versions to pull into git worktree.
- 1. Follow the steps in [the build process](#build).
- 1. Push the generated site to `gh-pages`.
+ 1. Push the generated site to `asf-site`.
+    ```
+    make deploy 
+    ```
 
 ## Validate Links
 
