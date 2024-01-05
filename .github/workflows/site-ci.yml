@@ -24,8 +24,6 @@ on:
     paths:
       - site/**
   workflow_dispatch:
-permissions:
-  contents: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -36,6 +34,5 @@ jobs:
           python-version: 3.x
       - name: Deploy Iceberg documentation
         run: |
-          echo "new.iceberg.apache.org" > CNAME
           make deploy
         working-directory: ./site

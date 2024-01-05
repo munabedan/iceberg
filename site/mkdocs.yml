@@ -15,9 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-
 INHERIT: ./nav.yml
-INHERIT: ./variables.yml
 
 copyright: |
   Apache Iceberg, Iceberg, Apache, the Apache feather logo, and the Apache Iceberg project logo are</br>either registered trademarks or trademarks of The Apache Software Foundation. Copyright &copy; 2023</br>The Apache Software Foundation, Licensed under the <a href="https://www.apache.org/licenses/">Apache License, Version 2.0</a>.</br></br>
@@ -40,6 +38,7 @@ theme:
     - content.code.copy
     - content.code.annotate
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.path
     - navigation.top
     - navigation.tracking
@@ -51,10 +50,8 @@ theme:
 
 plugins:
   - search
-  - macros:
-      include_yaml:
-        - variables.yml
   - monorepo
+  - macros
   - offline:
       enabled: !ENV [OFFLINE, false]
 
@@ -78,6 +75,24 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - tables
   - md_in_html
+  - toc:
+      permalink: 🔗
+
+extra:
+  icebergVersion: '1.4.2'
+  social:
+    - icon: fontawesome/regular/comments
+      link: './community'
+      title: community
+    - icon: fontawesome/brands/github
+      link: 'https://github.com/apache/iceberg'
+      title: github
+    - icon: fontawesome/brands/youtube
+      link: 'https://www.youtube.com/@ApacheIceberg'
+      title: youtube
+    - icon: fontawesome/brands/slack
+      link: 'https://join.slack.com/t/apache-iceberg/shared_invite/zt-287g3akar-K9Oe_En5j1UL7Y_Ikpai3A'
+      title: slack
 
 extra_css:
   - assets/stylesheets/extra.css
@@ -88,9 +103,6 @@ extra_css:
 extra_javascript:
   - assets/javascript/extra.js
 
- 
-
 watch:
   - nav.yml
   - overrides
-

@@ -269,7 +269,11 @@ header .md-search__input::placeholder {
 
 }
 
-
+@media (max-width: 767px) {
+  .intro-divider {
+    width: 100%;
+  }
+}
 
 @media (max-width: 1219px) {
   .header__links {
@@ -429,10 +433,16 @@ p {
 	width: 100%;
 }
 
+.fa-2x {
+	width: 2em;
+        height: 2em;
+	padding: 3px;
+	text-align: center;
+}
 
 .fa-fw {
 	width: 1em;
-  height: 1em;
+        height: 1em;
 	text-align: center;
 }
 

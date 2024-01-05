@@ -67,26 +67,13 @@ set class = class ~ " md-header--shadow md-header--lifted" %} {% elif
       {% set icon = config.theme.icon.search or "material/magnify" %} {% include
       ".icons/" ~ icon ~ ".svg" %}
     </label>
-    <div class="topnav-page-selection">
-      <a href="https://github.com/apache/iceberg" target="_blank"
-        ><img
-          src="https://iceberg.apache.org/docs/latest//img/GitHub-Mark.png"
-          target="_blank"
-          class="top-navbar-logo"
-      /></a>
-    </div>
-    <div class="topnav-page-selection">
-      <a
-        href="https://join.slack.com/t/apache-iceberg/shared_invite/zt-287g3akar-K9Oe_En5j1UL7Y_Ikpai3A"
-        target="_blank"
-        ><img
-          src="https://iceberg.apache.org/docs/latest//img/Slack_Mark_Web.png"
-          target="_blank"
-          class="top-navbar-logo"
-      /></a>
-    </div>
+
     <!-- Search interface -->
     {% include "partials/search.html" %} {% endif %}
+
+    {% if config.extra.social %}
+      {% include "partials/social.html" %}
+    {% endif %}
 
     <!-- Color palette toggle -->
     {% if config.theme.palette %} {% if not config.theme.palette is mapping %}

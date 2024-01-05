@@ -22,10 +22,10 @@ set -e
 assert_not_empty "${ICEBERG_VERSION}"
 clean
 
-mv docs/nightly/ ../"${ICEBERG_VERSION}"
-
 git checkout docs
 pull_remote docs
+
+cp ../docs/ docs/"${ICEBERG_VERSION}"
 
 cd ../
 
