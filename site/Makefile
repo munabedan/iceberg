@@ -19,7 +19,7 @@ help: # Show help for each of the Makefile recipes.
 
 .PHONY: serve
 serve: # Clean, build, and run the docs site locally.
-	dev/serve.sh
+	python3 dev/main.py serve
 
 .PHONY: build
 build: # Clean and build the docs site locally.
