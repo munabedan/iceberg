@@ -1,5 +1,5 @@
 ---
-title: "Apache Iceberg"
+title: "Apache Iceberg™"
 template: home.html
 ---
 <!--
